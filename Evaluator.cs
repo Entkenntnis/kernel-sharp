@@ -104,6 +104,7 @@ namespace Kernel
             else if (datum is KSymbol)
             {
                 KObject val = env.Lookup(((KSymbol)datum).Value);
+                string xxx = String.Join(", ", new List<string>(env.table.Keys));
                 if (null == val)
                     return CPS.Error("Unbound variable " + ((KSymbol)datum).Value, cont);
                 return CPS.Return(val, cont);
