@@ -106,7 +106,7 @@ making this more atomic, avoid $lambda
 
 ($define! $quote ($vau (x) #ignore x))
 
-($define! wrap
+($define! xwrap
   ($vau (op) env
     ($vau args a-env
       ((wrap1 ($vau #ignore #ignore
@@ -121,7 +121,7 @@ making this more atomic, avoid $lambda
             )))
         ))))
 
-($define! unwrap
+($define! xunwrap
   ($vau (app) env
     ($vau args #ignore
       ((wrap1 ($vau #ignore #ignore
