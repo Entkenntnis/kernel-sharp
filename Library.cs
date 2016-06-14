@@ -106,7 +106,7 @@ making this more atomic, avoid $lambda
 
 ($define! $quote ($vau (x) #ignore x))
 
-($define! xwrap
+($define! wrap
   ($vau (op) env
     ($vau args a-env
       ((wrap1 ($vau #ignore #ignore
@@ -121,7 +121,7 @@ making this more atomic, avoid $lambda
             )))
         ))))
 
-($define! xunwrap
+($define! unwrap
   ($vau (app) env
     ($vau args #ignore
       ((wrap1 ($vau #ignore #ignore
@@ -165,11 +165,11 @@ making this more atomic, avoid $lambda
               head
               (cons head ((f f) tail)))))))))
 
-              ($define! old $vau)
+              ($define! $vau1 $vau)
 
 ($define! $vau
-             (old (formals eformal . body) env
-                (eval (cons old (cons formals (cons eformal
+             ($vau1 (formals eformal . body) env
+                (eval (cons $vau1 (cons formals (cons eformal
                            (cons (cons $sequence body)()))))
                       env)))
 
@@ -329,13 +329,11 @@ making this more atomic, avoid $lambda
                       (aux2 result (car x))
                       (cdr x))))))))
         ($lambda (result k)
-          ($if (=? k 0)                 (* k #e+infinity) ; induce error
-                 ($if (=? k #e+infinity)       (* k result)
-                 ($if (=? k #e-infinity)       (* k result -1)
-                 ($if (=? result #e+infinity)  (* result (abs k))
-                             (aux3 result (abs k))))))
-
-                 )))
+          ($cond ((=? k 0)                 (* k #e+infinity)) ; induce error
+                 ((=? k #e+infinity)       (* k result))
+                 ((=? k #e-infinity)       (* k result -1))
+                 ((=? result #e+infinity)  (* result (abs k)))
+                 (#t                       (aux3 result (abs k)))))))
       ($lambda (x y)
         (/ (* x y) ((gcd gcd) x y)))))
     ($lambda (f)
@@ -380,15 +378,14 @@ making this more atomic, avoid $lambda
               cdr
               ($lambda ((j1 j2) (k1 k2))
                  (list (max j1 k1)
-                       ($if (=? j2 0)  k2
-                              ($if (=? k2 0)  j2
-                                (lcm j2 k2)))
-                              ))))
+                       ($cond ((=? j2 0)  k2)
+                              ((=? k2 0)  j2)
+                              (#t  (lcm j2 k2)))))))
 
       (enlist lss
               result-metrics
               ($lambda (lss) (apply appv (cars lss) env))
-              cdrs))))"/*
+              cdrs))))
 
 ($define! $let
    ($vau (bindings . body) env
@@ -823,7 +820,12 @@ making this more atomic, avoid $lambda
 ($define! $let/cc
    ($vau (symbol . body) env
       (eval (list call/cc (list* $lambda (list symbol) body))
-            env)))"/* +
+            env)))
+
+
+
+
+            (display ($quote library-loaded))"/* +
 
             "($define! add1 ($lambda (x) (+ x 1)))" +
             "" +
