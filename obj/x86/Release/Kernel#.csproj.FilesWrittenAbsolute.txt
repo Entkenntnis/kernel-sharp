@@ -1,0 +1,6 @@
+/home/dal/Schreibtisch/sink-01m10/Kernel#/obj/x86/Release/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/dal/Schreibtisch/sink-01m10/Kernel#/bin/Release/Library.kernel
+/home/dal/Schreibtisch/sink-01m10/Kernel#/bin/Release/Kernel#.exe.mdb
+/home/dal/Schreibtisch/sink-01m10/Kernel#/bin/Release/Kernel#.exe
+/home/dal/Schreibtisch/sink-01m10/Kernel#/obj/x86/Release/Kernel#.exe
+/home/dal/Schreibtisch/sink-01m10/Kernel#/obj/x86/Release/Kernel#.exe.mdb

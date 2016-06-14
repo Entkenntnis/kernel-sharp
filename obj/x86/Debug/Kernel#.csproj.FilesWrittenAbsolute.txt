@@ -1,0 +1,11 @@
+/home/dal/Schreibtisch/sink-01m10/Kernel#/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/dal/Schreibtisch/sink-01m10/Kernel#/bin/Debug/Kernel#.exe.mdb
+/home/dal/Schreibtisch/sink-01m10/Kernel#/bin/Debug/Kernel#.exe
+/home/dal/Schreibtisch/sink-01m10/Kernel#/obj/x86/Debug/Kernel#.exe
+/home/dal/Schreibtisch/sink-01m10/Kernel#/obj/x86/Debug/Kernel#.exe.mdb
+/home/dal/Schreibtisch/sink-01m10/Kernel#/bin/Debug/Library.kernel
+/home/dal/Data/Dokumente/Projekte/Kernel/sink-01m10/Kernel#/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/dal/Data/Dokumente/Projekte/Kernel/sink-01m10/Kernel#/bin/Debug/Kernel#.exe.mdb
+/home/dal/Data/Dokumente/Projekte/Kernel/sink-01m10/Kernel#/bin/Debug/Kernel#.exe
+/home/dal/Data/Dokumente/Projekte/Kernel/sink-01m10/Kernel#/obj/x86/Debug/Kernel#.exe
+/home/dal/Data/Dokumente/Projekte/Kernel/sink-01m10/Kernel#/obj/x86/Debug/Kernel#.exe.mdb
