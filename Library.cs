@@ -106,7 +106,8 @@ making this more atomic, avoid $lambda
 
 ($define! $quote ($vau (x) #ignore x))
 
-($define! wrap
+; library implementation of wrap. Functional, but very slow. Currently disabled.
+($define! xwrap
   ($vau (op) env
     ($vau args a-env
       ((wrap1 ($vau #ignore #ignore
@@ -121,18 +122,20 @@ making this more atomic, avoid $lambda
             )))
         ))))
 
-($define! unwrap
-  ($vau (app) env
-    ($vau args #ignore
-      ((wrap1 ($vau #ignore #ignore
-        (eval (cons app (walk args)) env)
-        ))
-        ($define! walk
-          (wrap1 ($vau (args) e
-            ($if (null? args)
-              ()
-              (cons (cons $quote (cons (car args) ()))
-                (walk (cdr args)))))))))))
+; this is not working AND not used anywhere anymore ...
+; so don't care for it (but: take care of $set! later)
+;($define! xunwrap
+;  ($vau (app) env
+;    ($vau args #ignore
+;      ((wrap1 ($vau #ignore #ignore
+;        (eval (cons app (walk args)) env)
+;        ))
+;        ($define! walk
+;          (wrap1 ($vau (args) e
+;            ($if (null? args)
+;              ()
+;              (cons (cons $quote (cons (car args) ()))
+;                (walk (cdr args)))))))))))
 
 ($define! $sequence
     ((wrap ($vau ($seq2) #ignore
@@ -218,11 +221,18 @@ making this more atomic, avoid $lambda
 ($define! cddddr ($lambda ((#ignore .(#ignore . (#ignore . (#ignore . x)))))x))
 
 ($define! apply
-   ($lambda (appv arg . opt)
-      (eval (cons (unwrap appv) arg)
-            ($if (null? opt)
-                 (make-environment)
-                 (car opt)))))
+  (($lambda (helper)
+     ($lambda (appv arg . opt)
+        (eval (cons appv ((helper helper) arg))
+              ($if (null? opt)
+                   (make-environment)
+                   (car opt)))))
+   ($lambda (f)
+    ($lambda (lst)
+      ($if (null? lst)
+          ()
+          (cons (list $quote (car lst))
+                ((f f) (cdr lst))))))))
 
 
 ($define! $cond
