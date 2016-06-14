@@ -235,8 +235,8 @@ making this more atomic, avoid $lambda
            (apply
               ($lambda ((test . body) . clauses)
                   ($if (eval test env)
-                        (apply (wrap $sequence) body env)
-                        (apply (wrap (f f)) clauses env)))
+                        (eval (cons $sequence body) env)
+                        (eval (cons (f f) clauses) env)))
                clauses))))))
 
 ($define! <=?
