@@ -98,10 +98,10 @@ making this more atomic, avoid $lambda
     ($vau (arg) a-env
       (eval (cons op (cons (eval arg a-env) ())) env))))
 
-($define! my-car
+($define! car
   (wrap1 ($vau ((x . #ignore)) #ignore x)))
  
-($define! my-cdr
+($define! cdr
   (wrap1 ($vau ((#ignore . x)) #ignore x)))
 
 ($define! $quote ($vau (x) #ignore x))
@@ -116,8 +116,8 @@ making this more atomic, avoid $lambda
           (wrap1 ($vau (args) #ignore
             ($if (null? args)
               ()
-              (cons (eval (my-car args) a-env)
-                (walk (my-cdr args))))
+              (cons (eval (car args) a-env)
+                (walk (cdr args))))
             )))
         ))))
 
@@ -131,8 +131,8 @@ making this more atomic, avoid $lambda
           (wrap1 ($vau (args) e
             ($if (null? args)
               ()
-              (cons (cons $quote (cons (my-car args) ()))
-                (walk (my-cdr args)))))))))))
+              (cons (cons $quote (cons (car args) ()))
+                (walk (cdr args)))))))))))
 
 ($define! $sequence
     ((wrap ($vau ($seq2) #ignore
@@ -183,8 +183,8 @@ making this more atomic, avoid $lambda
                   (write ($quote $lambda-defined))
 
 
-($define! car ($lambda ((x . #ignore)) x))
-($define! cdr ($lambda ((#ignore . x)) x))
+;($define! car ($lambda ((x . #ignore)) x))
+;($define! cdr ($lambda ((#ignore . x)) x))
 
 ($define! caar ($lambda (((x . #ignore) . #ignore)) x))
 ($define! cdar ($lambda (((#ignore . x) . #ignore)) x))
