@@ -337,7 +337,7 @@ making this more atomic, avoid $lambda
             x             ; don't worry here about inexactness
             ($if (<? x y)
               ((f f) x (- y x))
-              ((f f) (- x y) y))))))))
+              ((f f) (- x y) y))))))))"/*
 
 ;
 ; now, back to core derivations
@@ -531,7 +531,7 @@ making this more atomic, avoid $lambda
                               (>? n 0))))
                   args))))
 
-                  (display ($quote countable-list-loaded))"/*
+                  (display ($quote countable-list-loaded))
 
 ($define! reduce
    ($let ()

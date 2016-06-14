@@ -26,7 +26,7 @@ namespace Kernel
         public static RecursionResult<KObject> rceval(KObject datum, KEnvironment env, Continuation<KObject> cont)
         {
             // useful for debugging
-            Console.WriteLine(datum.Display());
+            //Console.WriteLine(datum.Display());
 
             if (datum is KPair)
             {
