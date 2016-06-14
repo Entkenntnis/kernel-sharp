@@ -307,6 +307,12 @@ making this more atomic, avoid $lambda
                                         result)) 
                                   (cdr x)))))))))
 
+($define! abs
+  ($lambda (x)
+    ($if (>=? x 0)
+      x
+      (* -1 x))))
+
 ($define! lcm
   ($lambda x
     (($lambda (gcd)
@@ -323,12 +329,13 @@ making this more atomic, avoid $lambda
                       (aux2 result (car x))
                       (cdr x))))))))
         ($lambda (result k)
-            (write (cons result k))
-          ($cond ((=? k 0)                 (* k #e+infinity)) ; induce error
-                 ((=? k #e+infinity)       (* k result))
-                 ((=? k #e-infinity)       (* k result -1))
-                 ((=? result #e+infinity)  (* result (abs k)))
-                 (#t                       (aux3 result (abs k)))))))
+          ($if (=? k 0)                 (* k #e+infinity) ; induce error
+                 ($if (=? k #e+infinity)       (* k result)
+                 ($if (=? k #e-infinity)       (* k result -1)
+                 ($if (=? result #e+infinity)  (* result (abs k))
+                             (aux3 result (abs k))))))
+
+                 )))
       ($lambda (x y)
         (/ (* x y) ((gcd gcd) x y)))))
     ($lambda (f)
