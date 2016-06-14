@@ -344,7 +344,7 @@ making this more atomic, avoid $lambda
             x             ; don't worry here about inexactness
             ($if (<? x y)
               ((f f) x (- y x))
-              ((f f) (- x y) y))))))))"/*
+              ((f f) (- x y) y))))))))
 
 ;
 ; now, back to core derivations
@@ -380,14 +380,15 @@ making this more atomic, avoid $lambda
               cdr
               ($lambda ((j1 j2) (k1 k2))
                  (list (max j1 k1)
-                       ($cond ((=? j2 0)  k2)
-                              ((=? k2 0)  j2)
-                              (#t  (lcm j2 k2)))))))
+                       ($if (=? j2 0)  k2
+                              ($if (=? k2 0)  j2
+                                (lcm j2 k2)))
+                              ))))
 
       (enlist lss
               result-metrics
               ($lambda (lss) (apply appv (cars lss) env))
-              cdrs))))
+              cdrs))))"/*
 
 ($define! $let
    ($vau (bindings . body) env
