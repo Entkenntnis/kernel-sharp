@@ -199,7 +199,7 @@ making this more atomic, avoid $lambda
      ($lambda (appv arg . opt)
         (eval (cons appv ((helper helper) arg))
               ($if (equal? () opt)
-                   (make-environment)
+                   #empty-env
                    (car opt)))))
    ($lambda (f)
     ($lambda (lst)

@@ -222,6 +222,8 @@ namespace Kernel
                     return new KInert();
                 else if (tag.Equals("ignore"))
                     return new KIgnore();
+                else if (tag.Equals("empty-env"))
+                    return new KEnvironment();
                 else if (tag.Equals("e-infinity"))
                     return new KDouble(Double.NegativeInfinity);
                 else if (tag.Equals("e+infinity"))
