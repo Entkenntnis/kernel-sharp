@@ -115,27 +115,12 @@ making this more atomic, avoid $lambda
         ))
         ($define! walk
           (wrap1 ($vau (args) #ignore
-            ($if (null? args)
+            ($if (equal? () args)
               ()
               (cons (eval (car args) a-env)
                 (walk (cdr args))))
             )))
         ))))
-
-; this is not working AND not used anywhere anymore ...
-; so don't care for it (but: take care of $set! later)
-;($define! xunwrap
-;  ($vau (app) env
-;    ($vau args #ignore
-;      ((wrap1 ($vau #ignore #ignore
-;        (eval (cons app (walk args)) env)
-;        ))
-;        ($define! walk
-;          (wrap1 ($vau (args) e
-;            ($if (null? args)
-;              ()
-;              (cons (cons $quote (cons (car args) ()))
-;                (walk (cdr args)))))))))))
 
 ($define! $sequence
     ((wrap ($vau ($seq2) #ignore
@@ -143,7 +128,7 @@ making this more atomic, avoid $lambda
             ($rec $rec))) ;this substitutes a y combinator
          ($vau (f) c-env
             ($vau (head . tail) env
-                ($if (null? tail)
+                ($if (equal? () tail)
                     (eval head env)
                     ($seq2
                         (eval head env)
@@ -153,8 +138,6 @@ making this more atomic, avoid $lambda
         ((wrap ($vau #ignore #ignore (eval second env)))
          (eval first env)))))
 
-
-
 ($define! list (wrap ($vau x #ignore x)))
 
 ($define! list*
@@ -163,11 +146,11 @@ making this more atomic, avoid $lambda
         ((my-list-rec my-list-rec) args)))))
    (wrap ($vau (f) #ignore
       (wrap ($vau ((head . tail)) #ignore
-          ($if (null? tail)
+          ($if (equal? () tail)
               head
               (cons head ((f f) tail)))))))))
 
-              ($define! $vau1 $vau)
+($define! $vau1 $vau)
 
 ($define! $vau
              ($vau1 (formals eformal . body) env
@@ -175,15 +158,10 @@ making this more atomic, avoid $lambda
                            (cons (cons $sequence body)()))))
                       env)))
 
-
 ($define! $lambda
    ($vau (formals . body) env
       (wrap (eval (list* $vau formals #ignore body)
                   env))))
-
-
-;($define! car ($lambda ((x . #ignore)) x))
-;($define! cdr ($lambda ((#ignore . x)) x))
 
 ($define! caar ($lambda (((x . #ignore) . #ignore)) x))
 ($define! cdar ($lambda (((#ignore . x) . #ignore)) x))
@@ -220,12 +198,12 @@ making this more atomic, avoid $lambda
   (($lambda (helper)
      ($lambda (appv arg . opt)
         (eval (cons appv ((helper helper) arg))
-              ($if (null? opt)
+              ($if (equal? () opt)
                    (make-environment)
                    (car opt)))))
    ($lambda (f)
     ($lambda (lst)
-      ($if (null? lst)
+      ($if (equal? () lst)
           ()
           (cons (list $quote (car lst))
                 ((f f) (cdr lst))))))))
@@ -236,7 +214,7 @@ making this more atomic, avoid $lambda
       (my-cond-rec my-cond-rec))
   ($lambda (f)
     ($vau clauses env
-      ($if (null? clauses)
+      ($if (equal? () clauses)
            #inert
            (apply
               ($lambda ((test . body) . clauses)
@@ -256,16 +234,16 @@ making this more atomic, avoid $lambda
       (rec rec))
     ($lambda (f)
       ($lambda (lst)
-        ($if (null? lst)
+        ($if (equal? () lst)
               #t
-              ($if (null? (car lst))
+              ($if (equal? () (car lst))
                    ((f f) (cdr lst))
                    #f)))))
   (($lambda (rec)
       (rec rec))
     ($lambda (rf)    
       ($lambda (f lst)
-        ($if (null? lst)
+        ($if (equal? () lst)
              ()
              (cons (f (car lst))
               ((rf rf) f (cdr lst)))))))))
@@ -278,7 +256,7 @@ making this more atomic, avoid $lambda
             env)))
 
 
-            (write ($quote base-logic-loaded))
+            (write ($quote base-logic-loaded))"/*
 
 
 
@@ -562,14 +540,18 @@ making this more atomic, avoid $lambda
               (apply and?
                      (map ($lambda (x) (apply old-eq? x))
                           (list-neighbors x)))))))
+                          (write ($quote eq-redefined))
+                          ($define! old-equal? equal?)
 ($define! equal?
-   ($let ((old-equal?  equal?))
       ($lambda x
          ($if ($and? (pair? x) (pair? (cdr x)) (null? (cddr x)))
               (apply old-equal? x)
               (apply and?
                      (map ($lambda (x) (apply old-equal? x))
-                          (list-neighbors x)))))))
+                          (list-neighbors x))))))
+                          (write ($quote equal-redefined))
+
+
 
 ; uses continuation, not supported and not needed here
 ;($define! $binds?
@@ -651,6 +633,8 @@ making this more atomic, avoid $lambda
                   (list (unwrap eval) exp2 env))
             (eval exp1 env))))
 
+            (write ($quote set-defined))
+
 ($define! $provide!
    ($vau (symbols . body) env
       (eval (list $define! symbols
@@ -670,7 +654,7 @@ making this more atomic, avoid $lambda
 ($define! for-each
    (wrap ($vau x env
             (apply map x env)
-            %inert)))
+            #inert)))
 
 ($provide! (promise? memoize $lazy force)
 
@@ -709,6 +693,8 @@ making this more atomic, avoid $lambda
                 (#t
                    (set-car! x (car (decapsulate y)))  ; iterate
                    (force-promise x))))))
+
+                   (write ($quote promise-loaded))
 
 ($define! abs ($lambda (x) ($if (<? x 0) (* x -1) x)))
 
