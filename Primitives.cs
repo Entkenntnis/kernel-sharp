@@ -682,7 +682,7 @@ namespace Kernel
             string path = (val as KString).Value;
             try
             {
-                List<KObject> tokens = KObject.ParseAll(File.ReadAllText(path));
+                List<KObject> tokens = Parser.ParseAll(File.ReadAllText(path));
                 foreach (var token in tokens)
                 {
                     Evaluator.Eval(token, env);
