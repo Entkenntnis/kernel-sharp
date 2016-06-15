@@ -154,7 +154,6 @@ making this more atomic, avoid $lambda
          (eval first env)))))
 
 
-         (write ($quote seq-loaded))
 
 ($define! list (wrap ($vau x #ignore x)))
 
@@ -176,14 +175,11 @@ making this more atomic, avoid $lambda
                            (cons (cons $sequence body)()))))
                       env)))
 
-      (write ($quote $vau-redefined))
 
 ($define! $lambda
    ($vau (formals . body) env
       (wrap (eval (list* $vau formals #ignore body)
                   env))))
-
-                  (write ($quote $lambda-defined))
 
 
 ;($define! car ($lambda ((x . #ignore)) x))
@@ -249,6 +245,51 @@ making this more atomic, avoid $lambda
                         (eval (cons (f f) clauses) env)))
                clauses))))))
 
+($define! map
+  (($lambda (all-null map1)
+    ($lambda (f . lsts)
+      ($if (all-null lsts)
+           ()
+           (cons (apply f (map1 car lsts))
+                 (apply map (cons f (map1 cdr lsts)))))))
+  (($lambda (rec)
+      (rec rec))
+    ($lambda (f)
+      ($lambda (lst)
+        ($if (null? lst)
+              #t
+              ($if (null? (car lst))
+                   ((f f) (cdr lst))
+                   #f)))))
+  (($lambda (rec)
+      (rec rec))
+    ($lambda (rf)    
+      ($lambda (f lst)
+        ($if (null? lst)
+             ()
+             (cons (f (car lst))
+              ((rf rf) f (cdr lst)))))))))
+
+
+($define! $let
+   ($vau (bindings . body) env
+      (eval (cons (list* $lambda (map car bindings) body)
+                  (map cadr bindings))
+            env)))
+
+
+            (write ($quote base-logic-loaded))
+
+
+
+
+
+
+
+
+
+
+
 ($define! <=?
     ($lambda (a b) ($if (=? a b) #t ($if (<? a b) #t #f))))
 
@@ -285,123 +326,10 @@ making this more atomic, avoid $lambda
            ((f f) (cdr ls) (- k 1))
            ls)))))
 
-($define! encycle!
-   ($lambda (ls k1 k2)
-      ($if (>? k2 0)
-           (set-cdr! (list-tail ls (+ (+ k1 k2) -1))
-                     (list-tail ls k1))
-           #inert)))
 
-;
-; digression:
-;   math applicatives max and lcm are used by map, so must be provided
-;   to test map, and without using anything derived later than map
-;
 
-($define! max
-  ($lambda x
-    (($lambda (aux)
-      (apply (aux aux)
-          (list* (car (get-list-metrics x)) #e-infinity x)))
-    ($lambda (f)
-      ($lambda (count result . x)
-        ($if (<=? count 0)
-              result
-              (apply (f f) (list* (- count 1) 
-                                  ($if (>? (car x) result)
-                                    ($if (inexact? result)
-                                        (* (car x) 1.0)
-                                        (car x))
-                                    ($if (inexact? (car x))
-                                        (* result 1.0)
-                                        result)) 
-                                  (cdr x)))))))))
 
-($define! abs
-  ($lambda (x)
-    ($if (>=? x 0)
-      x
-      (* -1 x))))
 
-($define! lcm
-  ($lambda x
-    (($lambda (gcd)
-      (($lambda (aux3)
-        (($lambda (aux2)
-          (($lambda (aux)
-            (apply (aux aux)
-              (list* (car (get-list-metrics x)) 1 x)))
-          ($lambda (f)
-            ($lambda (count result . x)
-              ($if (<=? count 0)
-                  result
-                  (apply (f f) (list* (- count 1)
-                      (aux2 result (car x))
-                      (cdr x))))))))
-        ($lambda (result k)
-          ($cond ((=? k 0)                 (* k #e+infinity)) ; induce error
-                 ((=? k #e+infinity)       (* k result))
-                 ((=? k #e-infinity)       (* k result -1))
-                 ((=? result #e+infinity)  (* result (abs k)))
-                 (#t                       (aux3 result (abs k)))))))
-      ($lambda (x y)
-        (/ (* x y) ((gcd gcd) x y)))))
-    ($lambda (f)
-      ($lambda (x y)
-        ($if (=? x y)
-            x             ; don't worry here about inexactness
-            ($if (<? x y)
-              ((f f) x (- y x))
-              ((f f) (- x y) y))))))))
-
-;
-; now, back to core derivations
-;
-
-($define! map
-   (wrap ($vau (appv . lss) env
-
-      ($define! acc
-         ($lambda (input (k1 k2) base-result head tail sum)
-            ($define! aux
-               ($lambda (input count)
-                  ($if (=? count 0)
-                       base-result
-                       (sum (head input)
-                            (aux (tail input) (- count 1))))))
-            (aux input (+ k1 k2))))
-
-      ($define! enlist
-         ($lambda (input ms head tail)
-            ($define! result (acc input ms () head tail cons))
-            (apply encycle! (list* result ms))
-            result))
-
-      ($define! mss (cddr (get-list-metrics lss)))
-
-      ($define! cars ($lambda (lss) (enlist lss mss caar cdr)))
-      ($define! cdrs ($lambda (lss) (enlist lss mss cdar cdr)))
-
-      ($define! result-metrics
-         (acc lss mss (cddr (get-list-metrics (car lss)))
-              ($lambda (lss) (cddr (get-list-metrics (car lss))))
-              cdr
-              ($lambda ((j1 j2) (k1 k2))
-                 (list (max j1 k1)
-                       ($cond ((=? j2 0)  k2)
-                              ((=? k2 0)  j2)
-                              (#t  (lcm j2 k2)))))))
-
-      (enlist lss
-              result-metrics
-              ($lambda (lss) (apply appv (cars lss) env))
-              cdrs))))
-
-($define! $let
-   ($vau (bindings . body) env
-      (eval (cons (list* $lambda (map car bindings) body)
-                  (map cadr bindings))
-            env)))
 
 ($define! not? ($lambda (x) ($if x #f #t)))
 
@@ -485,6 +413,13 @@ making this more atomic, avoid $lambda
                                 (set-last! cycle cycle)))
                       (aux1 a lss cycle))
                    (aux1 (- a 1) lss (list-ref lss (- a 1))))))))
+
+($define! encycle!
+   ($lambda (ls k1 k2)
+      ($if (>? k2 0)
+           (set-cdr! (list-tail ls (+ (+ k1 k2) -1))
+                     (list-tail ls k1))
+           #inert)))
 
 ($define! list-neighbors
    ($lambda (ls)
