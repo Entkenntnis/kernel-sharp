@@ -13,6 +13,7 @@ namespace Kernel
             if (initialized)
                 return;
             env = new KEnvironment(GetGroundEnv());
+            LoadLibrary(new CoreLibrary());
             initialized = true;
         }
 
@@ -29,15 +30,7 @@ namespace Kernel
                 GroundEnv.Bind("$define!", new PDefine());
                 GroundEnv.Bind("$vau", new PVau());
 
-                try {
-                    var lst = CoreLibrary.getLibrary();
-                    var objs = Parser.ParseAll(lst);
-                    foreach (KObject item in objs) {
-                        Evaluator.Eval(item, GroundEnv);
-                    }
-                } catch (ParseException e) {
-                    Console.WriteLine("Library couldn't be loaded: " + e.Message + "\n");
-                }
+
             }
             return GroundEnv;
         }
@@ -45,6 +38,30 @@ namespace Kernel
         private static void addp(string name, KOperative op)
         {
             GroundEnv.Bind(name, new KApplicative(op));
+        }
+
+        public static void ExtendGroundEnv(string symbol, KObject value)
+        {
+            init();
+            GetGroundEnv().Bind(symbol, value);
+        }
+
+        public static void LoadLibrary(Library lib)
+        {
+            try {
+                var lst = lib.getLibrary();
+                var objs = Parser.ParseAll(lst);
+                foreach (KObject item in objs) {
+                    Evaluator.Eval(item, GroundEnv);
+                }
+            } catch (ParseException e) {
+                Console.WriteLine("Library couldn't be loaded: " + e.Message + "\n");
+            }
+        }
+
+        public static void LoadModule(Module mod)
+        {
+            mod.Init();
         }
 
         public static KObject RunCode(string datum)

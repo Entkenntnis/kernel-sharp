@@ -2,9 +2,9 @@
 
 namespace Kernel
 {
-    public class CoreLibrary
+    public class CoreLibrary : Library
     {
-        public static string getLibrary()
+        public override string getLibrary()
         {
             return 
 /*

@@ -36,6 +36,8 @@ namespace Kernel
             // testing the interpreter
             args = new string[]{ "($define! y (map cons ($quote (a b c)) ($quote (d e f))))" };
 
+            Interpreter.ExtendGroundEnv("te", new KSymbol("this is a test"));
+
             foreach (string datum in args) {
                 Interpreter.RunCode(datum);
             }

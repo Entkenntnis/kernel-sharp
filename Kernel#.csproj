@@ -65,6 +65,8 @@
     <Compile Include="src\core\PIf.cs" />
     <Compile Include="src\core\PDefine.cs" />
     <Compile Include="src\core\PVau.cs" />
+    <Compile Include="src\Library.cs" />
+    <Compile Include="src\Module.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
