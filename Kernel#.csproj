@@ -70,5 +70,6 @@
   <ItemGroup>
     <Folder Include="src\CPS\" />
     <Folder Include="src\Parser\" />
+    <Folder Include="src\extensions\" />
   </ItemGroup>
 </Project>
