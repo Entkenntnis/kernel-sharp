@@ -5,16 +5,23 @@ namespace Kernel
 {
     public class Interpreter
     {
-        KEnvironment env;
+        private static bool initialized = false;
+        private static KEnvironment env;
+
+        private static void init()
+        {
+            if (initialized) return;
+            env = new KEnvironment(GetGroundEnv());
+            initialized = true;
+        }
 
         private static KEnvironment GroundEnv = null;
-        public static KEnvironment GetGroundEnv()
+        private static KEnvironment GetGroundEnv()
         {
             if (null == GroundEnv)
             {
                 GroundEnv = new KEnvironment(null);
                 //addp("boolean?", new PBoolean());
-                addp("equal?", new PEqual());
                 //addp("eq?", new PEq());
                 addp("equal?", new PEqual());
                 //addp("symbol?", new PSymbol());
@@ -32,23 +39,23 @@ namespace Kernel
                 //addp("set-cdr!", new PSetCdr());
                 //addp("copy-es-immutable", new PCopyEsImmutable());
                 //addp("copy-es", new PCopyEs());
-                addp("wrap", new PWrap());
+                //addp("wrap", new PWrap());
                 //addp("unwrap", new PUnwrap());
                 GroundEnv.Bind("$if", new PIf());
                 GroundEnv.Bind("$define!", new PDefine());
                 GroundEnv.Bind("$vau", new PVau());
-                addp("+", new PAdd());
-                addp("-", new PSub());
-                addp("*", new PMult());
-                addp("/", new PDiv());
+                //addp("+", new PAdd());
+                //addp("-", new PSub());
+                //addp("*", new PMult());
+                //addp("/", new PDiv());
                 //addp("number?", new PNumber());
                 //addp("integer?", new PInteger());
                 //addp("=?", new PNEq());
                 //addp("<?", new PNless());
                 //addp(">?", new PNgreater());
                 //addp("inexact?", new PInexact());
-                addp("write", new PWrite());
-                addp("display", new PDisplay());
+                //addp("write", new PWrite());
+                //addp("display", new PDisplay());
                 //addp("make-encapsulation-type", new PEncap());
                 //addp("continuation?", new PContinuation());
                 //addp("call/cc", new PCallCC());
@@ -59,11 +66,11 @@ namespace Kernel
                 //errorC.isError = true;
                 //GroundEnv.Bind("error-continuation", new KContinuation(errorC));
                 //addp("guard-continuation", new PGuardContinuation());
-                addp("load", new PLoad());
+                //addp("load", new PLoad());
 
                 try
                 {
-                    var lst = Library.getLibrary();
+                    var lst = CoreLibrary.getLibrary();
                     var objs = Parser.ParseAll(lst);
                     foreach (KObject item in objs)
                     {
@@ -82,18 +89,15 @@ namespace Kernel
             GroundEnv.Bind(name, new KApplicative(op));
         }
 
-        public Interpreter()
+        public static KObject RunCode(string datum)
         {
-            env = new KEnvironment(GetGroundEnv());
-        }
-
-        public KObject RunCode(string datum)
-        {
+            init();
             return Evaluator.Eval(Parser.Parse(datum), env);
         }
 
-        public void REPL()
+        public static void REPL()
         {
+            init();
             while (true)
             {
                 Console.Write(">> ");

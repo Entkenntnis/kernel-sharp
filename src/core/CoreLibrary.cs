@@ -2,7 +2,7 @@
 
 namespace Kernel
 {
-    public class Library
+    public class CoreLibrary
     {
         public static string getLibrary()
         {
@@ -107,7 +107,7 @@ making this more atomic, avoid $lambda
 ($define! $quote ($vau (x) #ignore x))
 
 ; library implementation of wrap. Functional, but very slow. Currently disabled.
-($define! xwrap
+($define! wrap
   ($vau (op) env
     ($vau args a-env
       ((wrap1 ($vau #ignore #ignore
@@ -253,10 +253,7 @@ making this more atomic, avoid $lambda
    ($vau (bindings . body) env
       (eval (cons (list* $lambda (map car bindings) body)
                   (map cadr bindings))
-            env)))
-
-
-            (write ($quote base-logic-loaded))"/*
+            env)))"/*
 
 
 

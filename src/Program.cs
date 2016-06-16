@@ -35,7 +35,7 @@ namespace Kernel
 
 
             // user added functionality to the parser
-            Parser.ExtendDefinition(new TokenDefinition(new Regex(@"""[^""\\]*(?:\\.[^""\\]*)*"""), "string", 80)); // user
+            /*Parser.ExtendDefinition(new TokenDefinition(new Regex(@"""[^""\\]*(?:\\.[^""\\]*)*"""), "string", 80)); // user
 
             Parser.ExtendTextHandler(new TextHandler(75, (Token x) => { // user
                 return x.Value == "#e-infinity"?new KDouble(Double.NegativeInfinity):null;
@@ -60,26 +60,26 @@ namespace Kernel
                 string sub = x.Value.Substring(1, x.Value.Length - 2);
                 sub = sub.Replace("\\n", "\n").Replace("\\t", "\t").Replace("\\\"", "\"").Replace("\\r", "\r");
                 return new KString(sub);
-            });
+            });*/
 
 
 
 
+           
 
+            //args = new string[]{ "(load \"/home/dal/Schreibtisch/kernel\")" };
 
-            Interpreter p = new Interpreter();
-
-            args = new string[]{ "(load \"/home/dal/Schreibtisch/kernel\")" };
+            args = new string[]{ "($define! y (map cons ($quote (a b c)) ($quote (d e f))))" };
 
             if (args.Length > 0)
             {
                 foreach (string datum in args)
                 {
-                    p.RunCode(datum);
+                    Interpreter.RunCode(datum);
                 }
             }
                 
-            p.REPL();
+            Interpreter.REPL();
         }
     }
 }
