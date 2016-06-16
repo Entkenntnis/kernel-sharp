@@ -47,7 +47,6 @@
     <Compile Include="src\core\KCombiner.cs" />
     <Compile Include="src\core\KEnvironment.cs" />
     <Compile Include="src\Interpreter.cs" />
-    <Compile Include="Provider.cs" />
     <Compile Include="ParserClasses.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

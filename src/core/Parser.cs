@@ -9,14 +9,93 @@ namespace Kernel
 
     public class Parser
     {
-        public static List<Token> Lex(string datum)
+        private static bool initialized = false;
+
+        private static List<TokenDefinition> definitions;
+        private static List<TextHandler> textHandlers;
+        private static Dictionary<string,Func<Token, KObject>> handlers;
+
+        private static void init()
         {
-            int curIndex = 0;
-            List<Token> tokens = new List<Token>();
-            List<TokenDefinition> definitions = TokenProvider.getDefinitions();
+            if (initialized)
+                return;
+            definitions = new List<TokenDefinition>();
+            definitions.Add(new TokenDefinition(new Regex(@"[\s]+"), "whitespace", 100, true));
+            definitions.Add(new TokenDefinition(new Regex(@"\;[^\n]*(?:\n|$)"), "comment", 90, true));
+            definitions.Add(new TokenDefinition(new Regex(@"\(\)"), "nil", 70));
+            definitions.Add(new TokenDefinition(new Regex(@"\("), "openpa", 60));
+            definitions.Add(new TokenDefinition(new Regex(@"\)"), "clospa", 50));
+            definitions.Add(new TokenDefinition(new Regex(@"\.(?=[\s\(])"), "dot", 40));
+            definitions.Add(new TokenDefinition(new Regex(@"[^\s\(\)\;]+"), "text", 30));
+
+            handlers = new Dictionary<string,Func<Token, KObject>>();
+
+            handlers.Add("nil", (Token x) => {
+                return new KNil();
+            });
+
+            textHandlers = new List<TextHandler>();
+            textHandlers.Add(new TextHandler(100, (Token x) => {
+                return x.Value == "#t"?new KBoolean(true):null;
+            }));
+            textHandlers.Add(new TextHandler(95, (Token x) => {
+                return x.Value == "#f"?new KBoolean(false):null;
+            }));
+            textHandlers.Add(new TextHandler(90, (Token x) => {
+                return x.Value == "#inert"?new KInert():null;
+            }));
+            textHandlers.Add(new TextHandler(85, (Token x) => {
+                return x.Value == "#ignore"?new KIgnore():null;
+            }));
+            textHandlers.Add(new TextHandler(80, (Token x) => {
+                return x.Value == "#empty-env"?new KEnvironment():null;
+            }));
+            textHandlers.Add(new TextHandler(0, (Token x) => {
+                return new KSymbol(x.Value);
+            }));
+
+            initialized = true;
+            update();
+        }
+
+        private static void update()
+        {
             definitions.Sort((a, b) => {
                 return b.Precedence - a.Precedence;
             });
+            textHandlers.Sort((a, b) => {
+                return b.Precedance - a.Precedance;
+            });
+        }
+
+        public static void ExtendDefinition(TokenDefinition d)
+        {
+            init();
+            definitions.Add(d);
+            update();
+        }
+
+        public static void ExtendTextHandler(TextHandler h)
+        {
+            init();
+            textHandlers.Add(h);
+            update();
+        }
+
+        public static void ExtendHandler(string key, Func<Token, KObject> f)
+        {
+            init();
+            handlers.Add(key, f);
+        }
+
+
+
+        public static List<Token> Lex(string datum)
+        {
+            init();
+            int curIndex = 0;
+            List<Token> tokens = new List<Token>();
+
             while (curIndex < datum.Length) {
                 bool success = false;
                 foreach (var rule in definitions) {
@@ -47,15 +126,10 @@ namespace Kernel
             if ("dot" == cur.Label)
                 return '.';
             if ("openpa" != cur.Label) {
-                var handler = TokenHandlerProvider.getHandler();
-                if (handler.ContainsKey(cur.Label)) {
-                    return handler[cur.Label](cur);
+                if (handlers.ContainsKey(cur.Label)) {
+                    return handlers[cur.Label](cur);
                 } else if ("text" == cur.Label) {
-                    var th = TextHandlerProvider.getHandler();
-                    th.Sort((a, b) => {
-                        return b.Precedance - a.Precedance;
-                    });
-                    foreach (TextHandler f in th) {
+                    foreach (TextHandler f in textHandlers) {
                         object ret = f.Handler(cur);
                         if (ret as KObject != null)
                             return ret;
@@ -107,6 +181,7 @@ namespace Kernel
 
         public static KObject Parse(string tokens)
         {
+            init();
             KObject ret = read(new TokenStream(Lex(tokens))) as KObject;
             if (null == ret)
                 throw new ParseException("Empty token!");
@@ -115,6 +190,7 @@ namespace Kernel
 
         public static List<KObject> ParseAll(string tokens)
         {
+            init();
             var output = new List<KObject>();
             TokenStream s = new TokenStream(Lex(tokens));
             KObject cur = read(s) as KObject;
