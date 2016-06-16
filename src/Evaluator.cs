@@ -3,10 +3,7 @@ using System.Collections.Generic;
 
 namespace Kernel
 {
-    public class RuntimeException : Exception
-    {
-        public RuntimeException(string message) : base(message){ }
-    }
+    
     public class Evaluator
     {
         public static KObject Eval(KObject datum, KEnvironment env)

@@ -34,10 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\CPS.cs" />
     <Compile Include="src\Evaluator.cs" />
-    <Compile Include="src\ParserClasses.cs" />
-    <Compile Include="src\Parser.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="src\Interpreter.cs" />
     <Compile Include="src\core\KPair.cs" />
@@ -46,6 +43,20 @@
     <Compile Include="src\core\KEnvironment.cs" />
     <Compile Include="src\core\CoreLibrary.cs" />
     <Compile Include="src\core\CorePrimitives.cs" />
+    <Compile Include="src\CPS\Continuation.cs" />
+    <Compile Include="src\CPS\RecursionResult.cs" />
+    <Compile Include="src\CPS\CPS.cs" />
+    <Compile Include="src\Parser\TokenDefinition.cs" />
+    <Compile Include="src\Parser\TokenStream.cs" />
+    <Compile Include="src\Parser\Token.cs" />
+    <Compile Include="src\Parser\TextHandler.cs" />
+    <Compile Include="src\Parser\ParseException.cs" />
+    <Compile Include="src\Parser\Parser.cs" />
+    <Compile Include="src\CPS\RuntimeException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="src\CPS\" />
+    <Folder Include="src\Parser\" />
+  </ItemGroup>
 </Project>
