@@ -19,6 +19,11 @@ namespace Kernel
         {
             return Value;
         }
+
+        public override bool CompareTo(KObject other)
+        {
+            return other is KSymbol && (other as KSymbol).Value == Value;
+        }
     }
 }
 

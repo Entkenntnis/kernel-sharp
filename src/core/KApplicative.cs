@@ -22,6 +22,11 @@ namespace Kernel
         {
             return Combiner.Combine(args, env, cont);
         }
+
+        public override bool CompareTo(KObject other)
+        {
+            return other is KApplicative && other == this;
+        }
     }
 }
 

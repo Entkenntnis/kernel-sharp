@@ -55,6 +55,11 @@ namespace Kernel
                 return "#<environment:" + String.Join(",", new List<string>(table.Keys)) + ">";
             }
         }
+
+        public override bool CompareTo(KObject other)
+        {
+            return other is KEnvironment && other == this;
+        }
     }
 }
 

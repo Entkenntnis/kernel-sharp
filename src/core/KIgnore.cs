@@ -9,6 +9,11 @@ namespace Kernel
         {
             return "#ignore";
         }
+
+        public override bool CompareTo(KObject other)
+        {
+            return other is KIgnore;
+        }
     }
 }
 

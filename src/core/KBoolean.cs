@@ -19,6 +19,11 @@ namespace Kernel
         {
             return Value ? "#t" : "#f";
         }
+
+        public override bool CompareTo(KObject other)
+        {
+            return other is KBoolean && (other as KBoolean).Value == Value;
+        }
     }
 }
 

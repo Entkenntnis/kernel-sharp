@@ -9,6 +9,11 @@ namespace Kernel
         {
             return "#inert";
         }
+
+        public override bool CompareTo(KObject other)
+        {
+            return other is KInert;
+        }
     }
 }
 

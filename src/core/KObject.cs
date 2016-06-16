@@ -27,6 +27,8 @@ namespace Kernel
             return Print(quoteStrings);
         }
 
+        public abstract bool CompareTo(KObject other);
+
         public override string ToString()
         {
             return Write();

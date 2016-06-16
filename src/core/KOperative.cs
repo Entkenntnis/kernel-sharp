@@ -137,6 +137,11 @@ namespace Kernel
                 return ReturnBool(result, cont);
             }
         }
+
+        public override bool CompareTo(KObject other)
+        {
+            return other is KOperative && other == this;
+        }
     }
 }
 

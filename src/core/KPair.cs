@@ -194,6 +194,11 @@ namespace Kernel
             }
             return sb.ToString();
         }
+
+        public override bool CompareTo(KObject other)
+        {
+            return (other is KPair) && other == this;
+        }
     }
 }
 
