@@ -33,21 +33,24 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Evaluator.cs" />
     <Compile Include="Numbers.cs" />
     <Compile Include="Primitives.cs" />
     <Compile Include="Library.cs" />
-    <Compile Include="CPS.cs" />
-    <Compile Include="src\core\KObject.cs" />
-    <Compile Include="src\core\Parser.cs" />
     <Compile Include="KObject2.cs" />
-    <Compile Include="src\core\KPair.cs" />
-    <Compile Include="src\core\KCombiner.cs" />
-    <Compile Include="src\core\KEnvironment.cs" />
+    <Compile Include="KEnvironment.cs" />
+    <Compile Include="KPair.cs" />
+    <Compile Include="KCombiner.cs" />
+    <Compile Include="KObject.cs" />
+    <Compile Include="src\CPS.cs" />
+    <Compile Include="src\Evaluator.cs" />
+    <Compile Include="src\ParserClasses.cs" />
+    <Compile Include="src\Parser.cs" />
+    <Compile Include="src\Program.cs" />
     <Compile Include="src\Interpreter.cs" />
-    <Compile Include="ParserClasses.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="Kernel#.userprefs" />
+  </ItemGroup>
 </Project>
