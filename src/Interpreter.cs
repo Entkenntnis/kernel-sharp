@@ -10,80 +10,38 @@ namespace Kernel
 
         private static void init()
         {
-            if (initialized) return;
+            if (initialized)
+                return;
             env = new KEnvironment(GetGroundEnv());
             initialized = true;
         }
 
         private static KEnvironment GroundEnv = null;
+
         private static KEnvironment GetGroundEnv()
         {
-            if (null == GroundEnv)
-            {
+            if (null == GroundEnv) {
                 GroundEnv = new KEnvironment(null);
-                //addp("boolean?", new PBoolean());
-                //addp("eq?", new PEq());
                 addp("equal?", new PEqual());
-                //addp("symbol?", new PSymbol());
-                //addp("inert?", new PInert());
-                //addp("pair?", new PPair());
-                //addp("null?", new PNull());
-                //addp("environment?", new PEnvironment());
-                //addp("ignore?", new PIgnore());
-                //addp("operative?", new POperative());
-                //addp("applicative?", new PApplicative());
                 addp("cons", new PCons());
                 addp("eval", new PEval());
-                //addp("make-environment", new PMakeEnvironment());
-                //addp("set-car!", new PSetCar());
-                //addp("set-cdr!", new PSetCdr());
-                //addp("copy-es-immutable", new PCopyEsImmutable());
-                //addp("copy-es", new PCopyEs());
-                //addp("wrap", new PWrap());
-                //addp("unwrap", new PUnwrap());
                 GroundEnv.Bind("$if", new PIf());
                 GroundEnv.Bind("$define!", new PDefine());
                 GroundEnv.Bind("$vau", new PVau());
-                //addp("+", new PAdd());
-                //addp("-", new PSub());
-                //addp("*", new PMult());
-                //addp("/", new PDiv());
-                //addp("number?", new PNumber());
-                //addp("integer?", new PInteger());
-                //addp("=?", new PNEq());
-                //addp("<?", new PNless());
-                //addp(">?", new PNgreater());
-                //addp("inexact?", new PInexact());
-                //addp("write", new PWrite());
-                //addp("display", new PDisplay());
-                //addp("make-encapsulation-type", new PEncap());
-                //addp("continuation?", new PContinuation());
-                //addp("call/cc", new PCallCC());
-                //addp("continuation->applicative", new PContinuationToApplicative());
-                //addp("extend-continuation", new PExtendContinuatione());
-                //GroundEnv.Bind("root-continuation", new KContinuation(CPS.RootContinuation<KObject>()));
-                //var errorC = CPS.RootContinuation<KObject>();
-                //errorC.isError = true;
-                //GroundEnv.Bind("error-continuation", new KContinuation(errorC));
-                //addp("guard-continuation", new PGuardContinuation());
-                //addp("load", new PLoad());
 
-                try
-                {
+                try {
                     var lst = CoreLibrary.getLibrary();
                     var objs = Parser.ParseAll(lst);
-                    foreach (KObject item in objs)
-                    {
+                    foreach (KObject item in objs) {
                         Evaluator.Eval(item, GroundEnv);
                     }
-                }
-                catch (ParseException e)
-                {
+                } catch (ParseException e) {
                     Console.WriteLine("Library couldn't be loaded: " + e.Message + "\n");
                 }
             }
             return GroundEnv;
         }
+
         private static void addp(string name, KOperative op)
         {
             GroundEnv.Bind(name, new KApplicative(op));
@@ -98,25 +56,20 @@ namespace Kernel
         public static void REPL()
         {
             init();
-            while (true)
-            {
+            while (true) {
                 Console.Write(">> ");
                 KObject datum = null;
-                try
-                {
+                try {
                     StringBuilder sb = new StringBuilder();
                     bool finished = false;
                     bool quoteContext = false;
                     int parenCount = 0;
-                    while (!finished)
-                    {
+                    while (!finished) {
                         string inData = Console.ReadLine() + "\n";
-                        for(int i = 0; i < inData.Length; i++)
-                        {
+                        for (int i = 0; i < inData.Length; i++) {
                             if (inData[i] == ';')
                                 break;
-                            if (inData[i] == '"')
-                            {
+                            if (inData[i] == '"') {
                                 int previous = i - 1;
                                 while (previous > 0 && inData[previous] == '\\')
                                     previous--;
@@ -135,25 +88,19 @@ namespace Kernel
                             finished = true;
                     }
                     datum = Parser.Parse(sb.ToString());
-                }
-                catch (ParseException e)
-                {
+                } catch (ParseException e) {
                     Console.WriteLine("ParseError: {0}", e.Message);
                     continue;
                 }
-                if (datum is KPair)
-                {
+                if (datum is KPair) {
                     KPair p = datum as KPair;
                     if (p.Car is KSymbol && ((KSymbol)p.Car).Value.Equals("exit") && p.Cdr is KNil)
                         break;
                 }
-                try
-                {
+                try {
                     datum = Evaluator.Eval(datum, env);
                     Console.WriteLine("\n" + datum.Write() + "\n");
-                }
-                catch (RuntimeException e)
-                {
+                } catch (RuntimeException e) {
                     Console.WriteLine("RuntimeException: " + e.Message);
                 }
                 /*catch (Exception e)

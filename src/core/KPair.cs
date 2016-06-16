@@ -4,13 +4,6 @@ using System.Collections.Generic;
 
 namespace Kernel
 {
-    public class KNil : KObject
-    {
-        public override string Print(bool quoteStrings)
-        {
-            return "()";
-        }
-    }
 
     public class KPair : KObject
     {
@@ -32,10 +25,12 @@ namespace Kernel
                 n.MakeImmutable();
             return n;
         }
+
         public static KObject CopyEs(KObject x)
         {
             return copyEs(x, true, new Dictionary<KObject, KObject>());
         }
+
         public static KObject CopyEsImmutable(KObject x)
         {
             return copyEs(x, false, new Dictionary<KObject, KObject>());
@@ -47,45 +42,36 @@ namespace Kernel
             KPair newlst = null;
             KPair head = newlst;
             List<KObject> visited = new List<KObject>();
-            while (true)
-            {
-                if (lst is KNil)
-                {
+            while (true) {
+                if (lst is KNil) {
                     if (null == head)
                         return nil;
                     else
                         return head;
-                }
-                else if (lst is KPair && visited.Contains(lst))
-                {
+                } else if (lst is KPair && visited.Contains(lst)) {
                     newlst.SetCdr(lst);
                     return newlst;
-                }
-                else if (lst is KPair)
-                {
+                } else if (lst is KPair) {
                     KPair orig = lst as KPair;
                     visited.Add(orig);
                     if (null == newlst)
                         head = newlst = new KPair(f(orig.Car), nil, true);
-                    else
-                    {
+                    else {
                         KPair newElement = new KPair(f(orig.Car), nil, true);
                         newlst.SetCdr(newElement);
                         newlst = newElement;
                     }
                     lst = orig.Cdr;
-                }
-                else
+                } else
                     throw new RuntimeException("Improper list passed to map");
             }                
         }
+
         public static void Foreach(Action<KObject> f, KObject lst)
         {
             List<KObject> visited = new List<KObject>();
-            while (!(lst is KNil))
-            {
-                if (lst is KPair)
-                {
+            while (!(lst is KNil)) {
+                if (lst is KPair) {
                     KPair cur = lst as KPair;
                     if (visited.Contains(cur))
                         return;
@@ -93,86 +79,87 @@ namespace Kernel
                         visited.Add(cur);
                     f(cur.Car);
                     lst = cur.Cdr;
-                }
-                else
+                } else
                     throw new RuntimeException("Improper list passed to foreach");
             }
             return;
         }
+
         public static int Length(KObject lst)
         {
             if (lst is KNil)
                 return 0;
             List<KObject> visited = new List<KObject>();
             int length = 0;
-            if (lst is KPair)
-            {
+            if (lst is KPair) {
                 KPair cur = lst as KPair;
                 visited.Add(cur);
                 length++;
-                while (true)
-                {
+                while (true) {
                     if (cur.Cdr is KNil)
                         return length;
-                    else if (cur.Cdr is KPair)
-                    {
+                    else if (cur.Cdr is KPair) {
                         cur = cur.Cdr as KPair;
                         if (visited.Contains(cur))
                             return -1;
                         else
                             visited.Add(cur);
                         length++;
-                    }
-                    else
+                    } else
                         return -1;
                 }
-            }
-            else
+            } else
                 return -1;
         }
-        public KObject Car
-        {
+
+        public KObject Car {
             get;
             private set;
         }
-        public KObject Cdr
-        {
+
+        public KObject Cdr {
             get;
             private set;
         }
-        public bool Mutable
-        {
+
+        public bool Mutable {
             get;
             private set;
         }
-        public KPair (KObject car, KObject cdr, bool mut)
+
+        public KPair(KObject car, KObject cdr, bool mut)
         {
             Car = car;
             Cdr = cdr;
             Mutable = mut;
         }
-        public void SetCar (KObject car)
+
+        public void SetCar(KObject car)
         {
             if (Mutable)
                 Car = car;
             else
                 throw new Exception("Internal: Attempt to mutate immutable list!");
         }
-        public void SetCdr (KObject cdr)
+
+        public void SetCdr(KObject cdr)
         {
             if (Mutable)
                 Cdr = cdr;
             else
                 throw new Exception("Internal: Attempt to mutate immutable list!");
         }
+
         public void MakeImmutable()
         {
             this.Mutable = false;
         }
+
         public override string Print(bool quoteStrings)
         {
             return Print(quoteStrings, new List<KObject>());
         }
+
         public override string Print(bool quoteStrings, List<KObject> visited)
         {
             if (visited.Contains(this))
@@ -181,37 +168,28 @@ namespace Kernel
             StringBuilder sb = new StringBuilder();
             sb.Append("(");
             KPair cur = this;
-            while (true)
-            {
+            while (true) {
                 var subvis = new List<KObject>();
                 subvis.AddRange(visited);
                 sb.Append(cur.Car.Print(quoteStrings, subvis));
-                if (cur.Cdr is KNil)
-                {
+                if (cur.Cdr is KNil) {
                     sb.Append(")");
                     break;
-                }
-                else
-                {
-                    if (cur.Cdr is KPair)
-                    {
+                } else {
+                    if (cur.Cdr is KPair) {
                         cur = (KPair)cur.Cdr;
                         sb.Append(" ");
-                    }
-                    else
-                    {
+                    } else {
                         sb.Append(" . ");
                         sb.Append(cur.Cdr.Print(quoteStrings, visited));
                         sb.Append(")");
                         break;
                     }
                 }
-                if (visited.Contains(cur))
-                {
+                if (visited.Contains(cur)) {
                     sb.Append(". #sref)");
                     return sb.ToString();
-                }
-                else
+                } else
                     visited.Add(cur);
             }
             return sb.ToString();

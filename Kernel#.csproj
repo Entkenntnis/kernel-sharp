@@ -42,7 +42,6 @@
     <Compile Include="src\core\KObject.cs" />
     <Compile Include="src\core\KEnvironment.cs" />
     <Compile Include="src\core\CoreLibrary.cs" />
-    <Compile Include="src\core\CorePrimitives.cs" />
     <Compile Include="src\CPS\Continuation.cs" />
     <Compile Include="src\CPS\RecursionResult.cs" />
     <Compile Include="src\CPS\CPS.cs" />
@@ -53,6 +52,19 @@
     <Compile Include="src\Parser\ParseException.cs" />
     <Compile Include="src\Parser\Parser.cs" />
     <Compile Include="src\CPS\RuntimeException.cs" />
+    <Compile Include="src\core\KNil.cs" />
+    <Compile Include="src\core\KBoolean.cs" />
+    <Compile Include="src\core\KInert.cs" />
+    <Compile Include="src\core\KIgnore.cs" />
+    <Compile Include="src\core\KSymbol.cs" />
+    <Compile Include="src\core\KApplicative.cs" />
+    <Compile Include="src\core\KOperative.cs" />
+    <Compile Include="src\core\PEqual.cs" />
+    <Compile Include="src\core\PCons.cs" />
+    <Compile Include="src\core\PEval.cs" />
+    <Compile Include="src\core\PIf.cs" />
+    <Compile Include="src\core\PDefine.cs" />
+    <Compile Include="src\core\PVau.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

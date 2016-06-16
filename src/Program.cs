@@ -33,50 +33,11 @@ namespace Kernel
         {
             Console.WriteLine("Welcome to Kernel#harp! Call (exit) to quit.\n");
 
-
-            // user added functionality to the parser
-            /*Parser.ExtendDefinition(new TokenDefinition(new Regex(@"""[^""\\]*(?:\\.[^""\\]*)*"""), "string", 80)); // user
-
-            Parser.ExtendTextHandler(new TextHandler(75, (Token x) => { // user
-                return x.Value == "#e-infinity"?new KDouble(Double.NegativeInfinity):null;
-            }));
-            Parser.ExtendTextHandler(new TextHandler(70, (Token x) => { // user
-                return x.Value == "#e+infinity"?new KDouble(Double.PositiveInfinity):null;
-            }));
-            Parser.ExtendTextHandler(new TextHandler(65, (Token x) => { // user
-                long l;
-                if (long.TryParse(x.Value, out l))
-                        return new KInteger(l);
-                else
-                    return null;
-            }));
-            Parser.ExtendTextHandler(new TextHandler(60, (Token x) => { // user
-                double d;
-                if (!x.Value.Contains("Infinity") &&  double.TryParse(x.Value,NumberStyles.Float, CultureInfo.InvariantCulture, out d))
-                    return new KDouble(d);
-                return false;
-            }));
-            Parser.ExtendHandler("string", (Token x) => { // user
-                string sub = x.Value.Substring(1, x.Value.Length - 2);
-                sub = sub.Replace("\\n", "\n").Replace("\\t", "\t").Replace("\\\"", "\"").Replace("\\r", "\r");
-                return new KString(sub);
-            });*/
-
-
-
-
-           
-
-            //args = new string[]{ "(load \"/home/dal/Schreibtisch/kernel\")" };
-
+            // testing the interpreter
             args = new string[]{ "($define! y (map cons ($quote (a b c)) ($quote (d e f))))" };
 
-            if (args.Length > 0)
-            {
-                foreach (string datum in args)
-                {
-                    Interpreter.RunCode(datum);
-                }
+            foreach (string datum in args) {
+                Interpreter.RunCode(datum);
             }
                 
             Interpreter.REPL();

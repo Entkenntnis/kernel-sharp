@@ -34,55 +34,9 @@ namespace Kernel
     }
 
 
-    public class KBoolean : KObject
-    {
-        public bool Value
-        {
-            get;
-            private set;
-        }
-        public KBoolean (bool value)
-        {
-            Value = value;
-        }
-        public override string Print(bool quoteStrings)
-        {
-            return Value ? "#t" : "#f";
-        }
-    }
-
-    public class KSymbol : KObject
-    {
-        public string Value
-        {
-            get;
-            private set;
-        }
-        public KSymbol (string value)
-        {
-            Value = value;
-        }
-        public override string Print(bool quoteStrings)
-        {
-            return Value;
-        }
-    }
 
 
-    public class KIgnore : KObject
-    {
-        public override string Print(bool quoteStrings)
-        {
-            return "#ignore";
-        }
-    }
 
-    public class KInert : KObject
-    {
-        public override string Print(bool quoteStrings)
-        {
-            return "#inert";
-        }
-    }
+
 }
 
