@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Kernel
 {
@@ -11,16 +12,227 @@ namespace Kernel
         public ParseException(string message) : base(message){ }
     }
 
+    public class TokenDefinition
+    {
+        public Regex Rule { get; private set; }
+        public string Label { get; private set; }
+        public bool Ignore { get; private set; }
+        public int Precedence { get; private set; }
+        public TokenDefinition(Regex rule, string label, int prec = 0, bool ignore = false)
+        {
+            Rule = rule;
+            Label = label;
+            Ignore = ignore;
+            Precedence = prec;
+        }
+    }
+
+    public class Token
+    {
+        public string Value { get; private set; }
+        public string Label { get; private set; }
+        public Token(string value, string label)
+        {
+            Value = value;
+            Label = label;
+        }
+        public override string ToString()
+        {
+            return string.Format("[Token: Value={0}, Label={1}]", Value, Label);
+        }
+    }
+
+    public class TokenProvider
+    {
+        public static List<TokenDefinition> getDefinitions()
+        {
+            List<TokenDefinition> definitions = new List<TokenDefinition>();
+            definitions.Add(new TokenDefinition(new Regex(@"[\s]+"), "whitespace", 100, true));
+            definitions.Add(new TokenDefinition(new Regex(@"\;[^\n]*(?:\n|$)"), "comment", 90, true));
+            definitions.Add(new TokenDefinition(new Regex(@"""[^""\\]*(?:\\.[^""\\]*)*"""), "string", 80));
+            definitions.Add(new TokenDefinition(new Regex(@"\(\)"), "nil", 70));
+            definitions.Add(new TokenDefinition(new Regex(@"\("), "openpa", 60));
+            definitions.Add(new TokenDefinition(new Regex(@"\)"), "clospa", 50));
+            definitions.Add(new TokenDefinition(new Regex(@"\.(?=[\s\(])"), "dot", 40));
+            definitions.Add(new TokenDefinition(new Regex(@"[^\s\(\)\;]+"), "text", 30));
+            return definitions;
+        }
+    }
+
+    public class TokenStream
+    {
+        private int index;
+        private List<Token> data;
+        public TokenStream(List<Token> input)
+        {
+            data = new List<Token>(input);
+            index = 0;
+        }
+        public Token Next()
+        {
+            if (index < data.Count)
+            {
+                return data[index++];
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+
     public class Parser
     {
-        private static string _data;
-        private static int _dataIndex;
+        public static List<Token> Lex(string datum)
+        {
+            int curIndex = 0;
+            List<Token> tokens = new List<Token>();
+            List<TokenDefinition> definitions = TokenProvider.getDefinitions();
+            definitions.Sort((a,b)=>{return b.Precedence - a.Precedence;});
+            while (curIndex < datum.Length)
+            {
+                bool success = false;
+                foreach (var rule in definitions)
+                {
+                    Match match = rule.Rule.Match(datum, curIndex);
+                    if (match.Success && match.Index == curIndex)
+                    {
+                        success = true;
+                        if (!rule.Ignore)
+                        {
+                            tokens.Add(new Token(match.Value, rule.Label));
+                        }
+                        curIndex += match.Length;
+                        break;
+                    }
+                }
+                if (!success)
+                {
+                    throw new ParseException("Unrecognised pattern");
+                }
+            }
+            return tokens;
+        }
+
+        public static object Read(TokenStream s)
+        {
+            Token cur = s.Next();
+            if (null == cur)
+                return null;
+            if ("clospa" == cur.Label)
+                return ')';
+            if ("dot" == cur.Label)
+                return '.';
+            if ("openpa" != cur.Label)
+            {
+                // some more cases here
+                if ("nil" == cur.Label)
+                {
+                    return new KNil();
+                }
+                if ("string" == cur.Label)
+                {
+                    string sub = cur.Value.Substring(1, cur.Value.Length - 2);
+                    sub = sub.Replace("\\n", "\n").Replace("\\t", "\t").Replace("\\\"", "\"").Replace("\\r", "\r");
+                    return new KString(sub);
+                }
+                else if ("text" == cur.Label)
+                {
+                    if (cur.Value == "#t")
+                    {
+                        return new KBoolean(true);
+                    }
+                    if (cur.Value == "#f")
+                    {
+                        return new KBoolean(false);
+                    }
+                    if (cur.Value == "#empty-env")
+                    {
+                        return new KEnvironment();
+                    }
+                    if (cur.Value == "#ignore")
+                    {
+                        return new KIgnore();
+                    }
+                    if (cur.Value == "#inert")
+                    {
+                        return new KInert();
+                    }
+                    if (cur.Value == "#e-infinity")
+                        return new KDouble(Double.NegativeInfinity);
+                    if (cur.Value == "#e+infinity")
+                        return new KDouble(Double.PositiveInfinity);
+                    long x;
+                    if (long.TryParse(cur.Value, out x))
+                        return new KInteger(x);
+
+                    double d;
+                    if (!cur.Value.Contains("Infinity") &&  double.TryParse(cur.Value,NumberStyles.Float, CultureInfo.InvariantCulture, out d))
+                        return new KDouble(d);
+
+                    return new KSymbol(cur.Value);
+                }
+                else
+                {
+                    throw new ParseException("unknown token");
+                }
+            }
+            else
+            {
+                // list stuff
+                List<object> content = new List<object>();
+                object v = Read(s);
+                bool dotted = false;
+                while (true)
+                {
+                    if ((v is char) && ((char)v) == '.')
+                    {
+                        v = Read(s);
+                        if (((char)Read(s)) != ')')
+                        {
+                            throw new ParseException("Illegal use of dot");
+                        }
+                        if (v is KObject)
+                            content.Add(v);
+                        else
+                            throw new ParseException("Illegal use of dot");
+                        dotted = true;
+                        break;
+                    }
+                    else if ((v is char) && ((char)v) == ')')
+                    {
+                        break;
+                    }
+                    else if (v is KObject)
+                    {
+                        content.Add(v);
+                        v = Read(s);
+                    }
+                    else
+                    {
+                        throw new ParseException("Parse error");
+                    }
+                }
+                int index = content.Count - 1;
+                KPair tail;
+                if (dotted)
+                {
+                    tail = new KPair(content[index-1] as KObject,content[index] as KObject,false);
+                    index -= 2;
+                } else {
+                    tail = new KPair(content[index--] as KObject, new KNil(), false);
+                }
+                for (int i = index; i >= 0; i--)
+                {
+                    tail = new KPair(content[i] as KObject, tail, false);
+                }
+                return tail;
+            }
+        }
 
         public static KObject Parse(string tokens)
         {
-            _data = tokens;
-            _dataIndex = 0;
-            KObject ret = buildExpr();
+            KObject ret = Read(new TokenStream(Lex(tokens))) as KObject;
             if (null == ret)
                 throw new ParseException("Empty token!");
             return ret;
@@ -28,221 +240,17 @@ namespace Kernel
 
         public static List<KObject> ParseAll(string tokens)
         {
-            _data = tokens;
-            _dataIndex = 0;
             var output = new List<KObject>();
-            KObject cur = buildExpr();
+            TokenStream s = new TokenStream(Lex(tokens));
+            KObject cur = Read(s) as KObject;
             while (cur != null)
             {
                 output.Add(cur);
-                cur = buildExpr();
+                cur = Read(s) as KObject;
             }
             return output;
         }
-
-        private static KObject buildExpr()
-        {
-            return buildExpr(nextToken());
-        }
-
-        private static KObject buildExpr(object next)
-        {
-            if (next is KObject)
-                return (KObject)next;
-            else if (next is char)
-            {
-                // list handling
-                char nextc = (char)next;
-                if (nextc != '(')
-                    throw new ParseException("Unbalanced paranthesis!");
-                
-                object secondnext = nextToken();
-                if (secondnext == null)
-                    return null;
-                if (secondnext is char && ((char)secondnext) == ')')
-                    return new KNil();
-
-                KObject secondnextobj;
-                if (secondnext is char && ((char)secondnext) == '(')
-                    secondnextobj = buildExpr(secondnext);
-                else
-                    secondnextobj = secondnext as KObject;
-
-                KPair listTail = new KPair(secondnextobj, null, true);
-                KPair listHead = listTail;
-
-                while (true)
-                {
-                    secondnext = nextToken();
-                    if (secondnext == null)
-                        throw new ParseException("Open Parens not closed!");
-                    if (secondnext is char && (char)secondnext == ')')
-                        break;
-                    if (secondnext is char && (char)secondnext == '.')
-                    {
-                        object thirdnext = nextToken();
-                        listTail.SetCdr(buildExpr(thirdnext));
-                        object forthnext = nextToken();
-                        if (forthnext is char && (char)forthnext == ')')
-                            break;
-                        else
-                            throw new ParseException("Dotted list unbalanced!");
-                    }
-                    KPair newPair = new KPair(buildExpr(secondnext), null, true);
-                    listTail.SetCdr(newPair);
-                    listTail = newPair;
-                }
-                if (listTail.Cdr == null)
-                    listTail.SetCdr(new KNil());
-                
-                return KPair.CopyEsImmutable(listHead);
-            }
-            else
-                return null;
-        }
-
-        private static object nextChar()
-        {
-            if (_dataIndex == _data.Length)
-                return null;
-            char t = _data[_dataIndex];
-            _dataIndex++;
-            if (t != '\\')
-                return t;
-            else if (_dataIndex + 1 == _data.Length)
-                return t;
-            else
-            {
-                _dataIndex++;
-                return _data.Substring(_dataIndex - 2, 2);
-            }
-        }
-
-        private static char unescape(string x)
-        {
-            char c = x[1];
-            if (c == 'n')
-                return '\n';
-            if (c == 't')
-                return '\t';
-            if (c == 'r')
-                return '\r';
-            if (c == '"')
-                return '"';
-            if (c == '\\')
-                return '\\';
-            else
-                throw new ParseException("Unknown escape char: " + c.ToString());
-        }
-
-        private static object nextToken()
-        {
-            object thisT;
-
-            // skip whitespace
-            while (true)
-            {
-                thisT = nextChar();
-                if (null == thisT)
-                    return null;
-                if (thisT is char && char.IsWhiteSpace((char)thisT))
-                    continue;
-                else if (thisT is char && (char)thisT == ';')
-                {
-                    while (thisT is char && (char)thisT != '\n')
-                        thisT = nextChar();
-                }
-                else
-                    break;
-            }
-
-            // parse string
-            if (thisT is char && (char)thisT == '"')
-            {
-                StringBuilder sb = new StringBuilder();
-                object nextC;
-                while (true)
-                {
-                    nextC = nextChar();
-                    if (null == nextC)
-                        throw new ParseException("Unbalanced string!");
-                    if (nextC is char && (char)nextC  == '"')
-                        break;
-                    if (nextC is string)
-                        sb.Append(unescape((string)nextC));
-                    else
-                        sb.Append(((char)nextC).ToString());
-                }
-                return new KString(sb.ToString());
-            }
-
-            // unparsed
-            if (thisT is char)
-            {
-                char c = (char)thisT;
-                if (c == '(' || c == ')' || c == '.')
-                    return c;
-            }
-
-            // get joined characters
-            StringBuilder joined = new StringBuilder();
-            object thatT = thisT;
-            while (true)
-            {
-                if (null == thatT)
-                    break;
-                else if (thatT is char)
-                {
-                    char c = (char)thatT;
-                    if (c == '(' || c == ')' || char.IsWhiteSpace(c) || c == ';')
-                    {
-                        _dataIndex--;
-                        break;
-                    }
-                    else
-                        joined.Append(((char)thatT).ToString());
-                }
-                else
-                {
-                    joined.Append(unescape((string)thatT));
-                }
-                thatT = nextChar();
-            }
-            string tok = joined.ToString().ToLower(CultureInfo.InvariantCulture);
-
-            // check hashtag token
-            if (tok.StartsWith("#"))
-            {
-                string tag = tok.Substring(1);
-                if (tag.Equals("t"))
-                    return new KBoolean(true);
-                else if (tag.Equals("f"))
-                    return new KBoolean(false);
-                else if (tag.Equals("inert"))
-                    return new KInert();
-                else if (tag.Equals("ignore"))
-                    return new KIgnore();
-                else if (tag.Equals("empty-env"))
-                    return new KEnvironment();
-                else if (tag.Equals("e-infinity"))
-                    return new KDouble(Double.NegativeInfinity);
-                else if (tag.Equals("e+infinity"))
-                    return new KDouble(Double.PositiveInfinity);
-            }
-
-            // try long number
-            long x;
-            if (long.TryParse(tok, out x))
-                return new KInteger(x);
-
-            // then try double
-            double d;
-            if (!tok.Contains("Infinity") &&  double.TryParse(tok,NumberStyles.Float, CultureInfo.InvariantCulture, out d))
-                return new KDouble(d);
-
-            // well, so it must be a symbol
-            return new KSymbol(tok);
-        }
+         
     }
 }
 
