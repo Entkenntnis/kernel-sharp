@@ -59,7 +59,7 @@ namespace Kernel
 
         public static RecursionResult<T> PassTo<T>(Func<RecursionResult<T>> nextStep)
         {
-            return new RecursionResult<T>(RecursionType.Next, default(T), nextStep, RootContinuation<T>());
+            return new RecursionResult<T>(RecursionType.Next, default(T), nextStep, null);
         }
 
         public static RecursionResult<KObject> Error(KObject message, Continuation<KObject> cont)
