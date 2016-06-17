@@ -13,7 +13,7 @@ namespace Kernel
             {
                 if (recursionResult.Cont != null && recursionResult.Cont.isError)
                 {
-                    string message =  recursionResult.Cont.Context.ToString();//recursionResult.Result is KObject ? (recursionResult.Result as KObject).Display() : recursionResult.ToString();
+                    string message =  recursionResult.Cont.Context.ToString();
                     // get call stack!
                     StringBuilder cs = new StringBuilder();
                     cs.AppendLine("Backtrace:");

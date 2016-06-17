@@ -69,6 +69,7 @@
     <Compile Include="src\Module.cs" />
     <Compile Include="src\core\PHelper.cs" />
     <Compile Include="src\core\POperative.cs" />
+    <Compile Include="src\core\CoreModule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

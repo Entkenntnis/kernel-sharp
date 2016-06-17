@@ -38,7 +38,7 @@ namespace Kernel
         }
 
 
-        public List<string> CheckFormalTree(KObject formaltree)
+        protected List<string> CheckFormalTree(KObject formaltree)
         {
             var lst = new List<string>();
             if (formaltree is KNil || formaltree is KIgnore)
@@ -57,26 +57,6 @@ namespace Kernel
             }
             else
                 throw new RuntimeException("Invalid formal tree");
-        }
-        public void BindFormalTree(KObject formal, KObject vals, KEnvironment env)
-        {
-            if (formal is KSymbol)
-            {
-                env.Bind(((KSymbol)formal).Value, vals);
-            }
-            else if (formal is KIgnore)
-                return;
-            else if (formal is KNil && vals is KNil)
-                return;
-            else if (formal is KPair && vals is KPair)
-            {
-                KPair f = formal as KPair;
-                KPair v = vals as KPair;
-                BindFormalTree(f.Car, v.Car, env);
-                BindFormalTree(f.Cdr, v.Cdr, env);
-            }
-            else
-                throw new RuntimeException("Can't bind formal tree!");
         }
 
         public override bool CompareTo(KObject other)

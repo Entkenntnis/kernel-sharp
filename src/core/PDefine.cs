@@ -14,7 +14,7 @@ namespace Kernel
                 {
                     try
                     {
-                        BindFormalTree(definand, e, env);
+                        Evaluator.BindFormalTree(definand, e, env);
                     }
                     catch (Exception ex)
                     {

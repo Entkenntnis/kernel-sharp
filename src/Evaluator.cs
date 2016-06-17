@@ -103,8 +103,30 @@ namespace Kernel
             KEnvironment local = new KEnvironment(op.staticenv);
             if (!(op.EFormal is KIgnore))
                 local.Bind(((KSymbol)op.EFormal).Value, env);
-            op.BindFormalTree(op.Formals, operands, local);
+            BindFormalTree(op.Formals, operands, local);
             return CPS.PassTo<KObject>(() => Evaluator.rceval(op.Expr, local, cont));
+        }
+
+
+        public static void BindFormalTree(KObject formal, KObject vals, KEnvironment env)
+        {
+            if (formal is KSymbol)
+            {
+                env.Bind(((KSymbol)formal).Value, vals);
+            }
+            else if (formal is KIgnore)
+                return;
+            else if (formal is KNil && vals is KNil)
+                return;
+            else if (formal is KPair && vals is KPair)
+            {
+                KPair f = formal as KPair;
+                KPair v = vals as KPair;
+                BindFormalTree(f.Car, v.Car, env);
+                BindFormalTree(f.Cdr, v.Cdr, env);
+            }
+            else
+                throw new RuntimeException("Can't bind formal tree!");
         }
     }
 }

@@ -7,47 +7,26 @@ namespace Kernel
     {
         private static bool initialized = false;
         private static KEnvironment env;
+        private static KEnvironment GroundEnv;
 
         private static void init()
         {
             if (initialized)
                 return;
-            env = new KEnvironment(GetGroundEnv());
-            LoadLibrary(new CoreLibrary());
+            GroundEnv = new KEnvironment(null);
+            env = new KEnvironment(GroundEnv);
             initialized = true;
-        }
-
-        private static KEnvironment GroundEnv = null;
-
-        private static KEnvironment GetGroundEnv()
-        {
-            if (null == GroundEnv) {
-                GroundEnv = new KEnvironment(null);
-                addp("equal?", new PEqual());
-                addp("cons", new PCons());
-                addp("eval", new PEval());
-                GroundEnv.Bind("$if", new PIf());
-                GroundEnv.Bind("$define!", new PDefine());
-                GroundEnv.Bind("$vau", new PVau());
-
-
-            }
-            return GroundEnv;
-        }
-
-        private static void addp(string name, KOperative op)
-        {
-            GroundEnv.Bind(name, new KApplicative(op));
         }
 
         public static void ExtendGroundEnv(string symbol, KObject value)
         {
             init();
-            GetGroundEnv().Bind(symbol, value);
+            GroundEnv.Bind(symbol, value);
         }
 
         public static void LoadLibrary(Library lib)
         {
+            init();
             try {
                 var lst = lib.getLibrary();
                 var objs = Parser.ParseAll(lst);
@@ -61,6 +40,7 @@ namespace Kernel
 
         public static void LoadModule(Module mod)
         {
+            init();
             mod.Init();
         }
 
