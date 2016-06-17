@@ -8,7 +8,7 @@ namespace Kernel
         {
             var res = PHelper.CheckParameter(args, 2, "$define!");
             if (res != null)
-                return CPS.Error(res, cont);
+                return PHelper.Error(res, cont);
             KObject definand = PHelper.First(args), expr = PHelper.Second(args);
             var cc = new Continuation<KObject>((e) =>
                 {
@@ -18,10 +18,10 @@ namespace Kernel
                     }
                     catch (Exception ex)
                     {
-                        return CPS.Error(ex.Message, cont);
+                        return PHelper.Error(ex.Message, cont);
                     }
                     return PHelper.Return(new KInert(), cont);
-                }, cont, expr);
+                }, cont, expr.Display());
             return CPS.PassTo(() => Evaluator.rceval(expr, env, cc));        
         }
     }

@@ -8,10 +8,10 @@ namespace Kernel
         {
             var res = PHelper.CheckParameter(args, 2, "eval");
             if (res != null)
-                return CPS.Error(res, cont);
+                return PHelper.Error(res, cont);
             KObject expr = PHelper.First(args), envir = PHelper.Second(args);
             if (!(envir is KEnvironment))
-                return CPS.Error("eval: not an environment", cont);
+                return PHelper.Error("eval: not an environment", cont);
             return CPS.PassTo<KObject>(() => Evaluator.rceval(expr, (KEnvironment)envir, cont));
         }
     }

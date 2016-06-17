@@ -8,7 +8,7 @@ namespace Kernel
         {
             var res = PHelper.CheckParameter(args, 3, "$vau");
             if (res != null)
-                return CPS.Error(res, cont);
+                return PHelper.Error(res, cont);
             try
             {
                 KObject formalt = PHelper.First(args), eformal = PHelper.Second(args), expr = PHelper.Third(args);
@@ -17,7 +17,7 @@ namespace Kernel
             }
             catch (Exception e)
             {
-                return CPS.Error(e.Message, cont);
+                return PHelper.Error(e.Message, cont);
             }
         }
     }

@@ -8,12 +8,12 @@ namespace Kernel
         {
             var res = PHelper.CheckParameter(args, 3, "$if");
             if (res != null)
-                return CPS.Error(res, cont);
+                return PHelper.Error(res, cont);
             KObject pred = PHelper.First(args), tr = PHelper.Second(args), fl = PHelper.Third(args);
             var cc = new Continuation<KObject>((p) =>
                 {
                     if (!(p is KBoolean))
-                        return CPS.Error("$if: predicate not boolean", cont);
+                        return PHelper.Error("$if: predicate not boolean", cont);
                     else
                     {
                         if (((KBoolean)p).Value)
@@ -21,7 +21,7 @@ namespace Kernel
                         else
                             return CPS.PassTo<KObject>(() => Evaluator.rceval(fl, env, cont));
                     }
-                }, cont, pred);
+                }, cont, pred.Display());
             return CPS.PassTo(() => Evaluator.rceval(pred, env, cc));            
         }
     }

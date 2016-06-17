@@ -30,7 +30,7 @@ namespace Kernel
         {
             var res = PHelper.CheckParameter(args, 2, "equal?");
             if (res != null)
-                return CPS.Error(res, cont);
+                return PHelper.Error(res, cont);
             KObject a = PHelper.First(args);
             KObject b = PHelper.Second(args);
             return PHelper.ReturnBool(CompareEqual(a, b, new List<KObject>()), cont);

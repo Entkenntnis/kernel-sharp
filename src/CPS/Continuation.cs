@@ -15,14 +15,14 @@ namespace Kernel
             get;
             private set;
         }
-        public KObject Context
+        public object Context
         {
             get;
             private set;
         }
         //hacky
         public bool isError = false;
-        public Continuation(Func<T, RecursionResult<T>> next, Continuation<T> parent, KObject context)
+        public Continuation(Func<T, RecursionResult<T>> next, Continuation<T> parent, object context)
         {
             NextStep = next;
             Parent = parent;

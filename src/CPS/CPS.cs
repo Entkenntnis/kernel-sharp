@@ -13,14 +13,14 @@ namespace Kernel
             {
                 if (recursionResult.Cont != null && recursionResult.Cont.isError)
                 {
-                    string message =  recursionResult.Result is KObject ? (recursionResult.Result as KObject).Display() : recursionResult.ToString();
+                    string message =  recursionResult.Cont.Context.ToString();//recursionResult.Result is KObject ? (recursionResult.Result as KObject).Display() : recursionResult.ToString();
                     // get call stack!
                     StringBuilder cs = new StringBuilder();
                     cs.AppendLine("Backtrace:");
                     var cc = recursionResult.Cont.Parent;
                     while (cc.Context != null)
                     {
-                        cs.AppendLine(cc.Context.Display());
+                        cs.AppendLine(cc.Context.ToString());
                         cc = cc.Parent;
                     }
                     cs.Append("------------");
@@ -62,19 +62,14 @@ namespace Kernel
             return new RecursionResult<T>(RecursionType.Next, default(T), nextStep, null);
         }
 
-        public static RecursionResult<KObject> Error(KObject message, Continuation<KObject> cont)
+        public static RecursionResult<T> Error<T>(string message, Continuation<T> cont)
         {
-            Continuation<KObject> cc = new Continuation<KObject>((x) =>
+            Continuation<T> cc = new Continuation<T>((x) =>
                 {
                     return null;
-                }, cont, null);
+                }, cont, message);
             cc.isError = true;
-            return new RecursionResult<KObject>(RecursionType.Return, message, null, cc);
-        }
-
-        public static RecursionResult<KObject> Error(string message, Continuation<KObject> cont)
-        {
-            return CPS.Error(new KSymbol(message), cont);
+            return new RecursionResult<T>(RecursionType.Return, default(T), null, cc);
         }
 
         public static Continuation<T> RootContinuation<T>()

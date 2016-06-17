@@ -33,6 +33,11 @@ namespace Kernel
         {
             return (((KPair)((KPair)p).Cdr).Cdr as KPair).Car;
         }
+
+        public static RecursionResult<KObject> Error(string message, Continuation<KObject> cont)
+        {
+            return CPS.Error<KObject>(message, cont);
+        }
     }
 }
 

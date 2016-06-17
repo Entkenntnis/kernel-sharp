@@ -25,19 +25,13 @@ namespace Kernel
                     {
                         if (f is KOperative)
                         {
-                            //return ((KOperative)f).Combine(p.Cdr, env, cont);
-
-                             //   
                             return combineOp(f as KOperative, p.Cdr, env, cont);
                         }
                         else if (f is KApplicative && (p.Cdr is KPair || p.Cdr is KNil))
                         {
                             if (p.Cdr is KNil)
                             {
-                                KApplicative app = f as KApplicative;
-                                while (app.Combiner is KApplicative)
-                                    app = app.Combiner as KApplicative;
-                                return combineOp(app.Combiner as KOperative, p.Cdr, env, cont);
+                                return combineApp(f as KApplicative, p.Cdr, env, cont);
                             }
                             KPair ops = p.Cdr as KPair;
                             LinkedList<KObject> input = new LinkedList<KObject>();
@@ -60,10 +54,7 @@ namespace Kernel
                                             output = new KPair(pairs.Last.Value, output);
                                             pairs.RemoveLast();
                                         }
-                                        KApplicative app = f as KApplicative;
-                                        while (app.Combiner is KApplicative)
-                                            app = app.Combiner as KApplicative;
-                                        return combineOp(app.Combiner as KOperative, output, env, cont);
+                                        return combineApp(f as KApplicative, output, env, cont);
                                     }
                                     else
                                     {
@@ -76,22 +67,29 @@ namespace Kernel
                                 };
                             KObject next2 = input.First.Value;
                             input.RemoveFirst();
-                            var cc = new Continuation<KObject>(recursion, cont, p);
+                            var cc = new Continuation<KObject>(recursion, cont, p.Display());
                             return CPS.PassTo(() => rceval(next2, env, cc));
                         }
-                        return CPS.Error("Unsuitable operation", cont);
-                    }, cont, p.Car);
+                        return CPS.Error<KObject>("Unsuitable operation", cont);
+                    }, cont, p.Car.Display());
                 return CPS.PassTo(() => rceval(p.Car, env, childCont));
             }
             else if (datum is KSymbol)
             {
                 KObject val = env.Lookup(((KSymbol)datum).Value);
                 if (null == val)
-                    return CPS.Error("Unbound variable " + ((KSymbol)datum).Value, cont);
+                    return CPS.Error<KObject>("Unbound variable " + ((KSymbol)datum).Value, cont);
                 return CPS.Return(val, cont);
             }
             else
                 return CPS.Return(datum, cont);
+        }
+
+        private static RecursionResult<KObject> combineApp(KApplicative app, KObject operands, KEnvironment env, Continuation<KObject> cont)
+        {
+            while (app.Combiner is KApplicative)
+                app = app.Combiner as KApplicative;
+            return combineOp(app.Combiner as KOperative, operands, env, cont);
         }
 
         private static RecursionResult<KObject> combineOp(KOperative op, KObject operands, KEnvironment env, Continuation<KObject> cont)
@@ -100,12 +98,12 @@ namespace Kernel
                 if (op is POperative) {
                     return (op as POperative).Combine(operands, env, cont);
                 }
-                return CPS.Error("Primitive without implementation!", cont);
+                return CPS.Error<KObject>("Primitive without implementation!", cont);
             }
             KEnvironment local = new KEnvironment(op.staticenv);
             if (!(op.EFormal is KIgnore))
                 local.Bind(((KSymbol)op.EFormal).Value, env);
-            KOperative.BindFormalTree(op.Formals, operands, local);
+            op.BindFormalTree(op.Formals, operands, local);
             return CPS.PassTo<KObject>(() => Evaluator.rceval(op.Expr, local, cont));
         }
     }

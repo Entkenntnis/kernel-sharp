@@ -38,7 +38,7 @@ namespace Kernel
         }
 
 
-        public static List<string> CheckFormalTree(KObject formaltree)
+        public List<string> CheckFormalTree(KObject formaltree)
         {
             var lst = new List<string>();
             if (formaltree is KNil || formaltree is KIgnore)
@@ -58,7 +58,7 @@ namespace Kernel
             else
                 throw new RuntimeException("Invalid formal tree");
         }
-        public static void BindFormalTree(KObject formal, KObject vals, KEnvironment env)
+        public void BindFormalTree(KObject formal, KObject vals, KEnvironment env)
         {
             if (formal is KSymbol)
             {
