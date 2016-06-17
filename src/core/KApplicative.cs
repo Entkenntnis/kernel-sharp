@@ -18,10 +18,6 @@ namespace Kernel
         {
             return "#<applicative:" + Combiner.Print(quoteStrings) + ">";
         }
-        public override RecursionResult<KObject> Combine(KObject args, KEnvironment env, Continuation<KObject> cont)
-        {
-            return Combiner.Combine(args, env, cont);
-        }
 
         public override bool CompareTo(KObject other)
         {

@@ -2,7 +2,7 @@
 
 namespace Kernel
 {
-    public class PDefine : KOperative
+    public class PDefine : POperative
     {
         public override RecursionResult<KObject> Combine(KObject args, KEnvironment env, Continuation<KObject> cont)
         {

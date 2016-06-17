@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Kernel
 {
-    public class PEqual : KOperative
+    public class PEqual : POperative
     {
         public static bool CompareEqual(KObject a, KObject b, List<KObject> visited)
         {

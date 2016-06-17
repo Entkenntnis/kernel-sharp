@@ -7,34 +7,6 @@ namespace Kernel
 
     public class KPair : KObject
     {
-  
-        // move this to the evaluator! it is only used there
-        public static KObject Map(Func<KObject, KObject> f, KObject lst)
-        {
-            KNil nil = new KNil();
-            KPair newlst = null;
-            KPair head = newlst;
-            while (true) {
-                if (lst is KNil) {
-                    if (null == head)
-                        return nil;
-                    else
-                        return head;
-                } else if (lst is KPair) {
-                    KPair orig = lst as KPair;
-                    if (null == newlst)
-                        head = newlst = new KPair(f(orig.Car), nil);
-                    else {
-                        KPair newElement = new KPair(f(orig.Car), nil);
-                        newlst.SetCdr(newElement);
-                        newlst = newElement;
-                    }
-                    lst = orig.Cdr;
-                } else
-                    throw new RuntimeException("Improper list passed to map");
-            }                
-        }
-
         public static void Foreach(Action<KObject> f, KObject lst)
         {
             while (!(lst is KNil)) {
@@ -126,4 +98,3 @@ namespace Kernel
         }
     }
 }
-

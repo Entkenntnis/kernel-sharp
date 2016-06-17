@@ -10,15 +10,6 @@ namespace Kernel
         {
             return CPS.Execute<KObject>(() => rceval(datum, env, CPS.RootContinuation<KObject>()));
         }
-        private static LinkedList<KObject> CopyLL(LinkedList<KObject> orig)
-        {
-            LinkedList<KObject> newLL = new LinkedList<KObject>();
-            foreach (KObject obj in orig)
-            {
-                newLL.AddLast(obj);
-            }
-            return newLL;
-        }
 
         public static RecursionResult<KObject> rceval(KObject datum, KEnvironment env, Continuation<KObject> cont)
         {
@@ -34,13 +25,19 @@ namespace Kernel
                     {
                         if (f is KOperative)
                         {
-                            return ((KOperative)f).Combine(p.Cdr, env, cont);
+                            //return ((KOperative)f).Combine(p.Cdr, env, cont);
+
+                             //   
+                            return combineOp(f as KOperative, p.Cdr, env, cont);
                         }
                         else if (f is KApplicative && (p.Cdr is KPair || p.Cdr is KNil))
                         {
                             if (p.Cdr is KNil)
                             {
-                                return ((KApplicative)f).Combine(p.Cdr, env, cont);
+                                KApplicative app = f as KApplicative;
+                                while (app.Combiner is KApplicative)
+                                    app = app.Combiner as KApplicative;
+                                return combineOp(app.Combiner as KOperative, p.Cdr, env, cont);
                             }
                             KPair ops = p.Cdr as KPair;
                             LinkedList<KObject> input = new LinkedList<KObject>();
@@ -49,7 +46,7 @@ namespace Kernel
                                     input.AddLast(x);
                                 }, ops);
                             LinkedList<KObject> pairs = new LinkedList<KObject>();
-                            Func<KObject,  RecursionResult<KObject>> recursion = null;
+                            Func<KObject, RecursionResult<KObject>> recursion = null;
 
                             // this continuation is called with the next argument evaled to x. Place next value
                             recursion = (x) =>
@@ -63,7 +60,10 @@ namespace Kernel
                                             output = new KPair(pairs.Last.Value, output);
                                             pairs.RemoveLast();
                                         }
-                                        return ((KApplicative)f).Combine(output, env, cont);
+                                        KApplicative app = f as KApplicative;
+                                        while (app.Combiner is KApplicative)
+                                            app = app.Combiner as KApplicative;
+                                        return combineOp(app.Combiner as KOperative, output, env, cont);
                                     }
                                     else
                                     {
@@ -92,6 +92,21 @@ namespace Kernel
             }
             else
                 return CPS.Return(datum, cont);
+        }
+
+        private static RecursionResult<KObject> combineOp(KOperative op, KObject operands, KEnvironment env, Continuation<KObject> cont)
+        {
+            if (null == op.Expr) {
+                if (op is POperative) {
+                    return (op as POperative).Combine(operands, env, cont);
+                }
+                return CPS.Error("Primitive without implementation!", cont);
+            }
+            KEnvironment local = new KEnvironment(op.staticenv);
+            if (!(op.EFormal is KIgnore))
+                local.Bind(((KSymbol)op.EFormal).Value, env);
+            KOperative.BindFormalTree(op.Formals, operands, local);
+            return CPS.PassTo<KObject>(() => Evaluator.rceval(op.Expr, local, cont));
         }
     }
 }

@@ -5,10 +5,10 @@ namespace Kernel
 {
     public class KOperative : KCombiner
     {
-        private KObject Formals;
-        private KObject EFormal;
-        private KObject Expr;
-        private KEnvironment staticenv;
+        public KObject Formals { get; private set; }
+        public KObject EFormal{ get; private set; }
+        public KObject Expr{ get; private set; }
+        public KEnvironment staticenv{ get; private set; }
         public KOperative()
         {
         }
@@ -31,7 +31,14 @@ namespace Kernel
             else
                 staticenv = env;
         }
-        protected List<string> CheckFormalTree(KObject formaltree)
+
+        public override string Print(bool quoteStrings)
+        {
+            return "#<operative" + (null == Expr ? " p:" + this.GetType().ToString() : "") + ">";
+        }
+
+
+        public static List<string> CheckFormalTree(KObject formaltree)
         {
             var lst = new List<string>();
             if (formaltree is KNil || formaltree is KIgnore)
@@ -51,11 +58,7 @@ namespace Kernel
             else
                 throw new RuntimeException("Invalid formal tree");
         }
-        public override string Print(bool quoteStrings)
-        {
-            return "#<operative" + (null == Expr ? " p:" + this.GetType().ToString() : "") + ">";
-        }
-        protected void BindFormalTree(KObject formal, KObject vals, KEnvironment env)
+        public static void BindFormalTree(KObject formal, KObject vals, KEnvironment env)
         {
             if (formal is KSymbol)
             {
@@ -74,16 +77,6 @@ namespace Kernel
             }
             else
                 throw new RuntimeException("Can't bind formal tree!");
-        }
-        public override RecursionResult<KObject> Combine(KObject operands, KEnvironment env, Continuation<KObject> cont)
-        {
-            if (null == Expr)
-                return CPS.Error("Primitive without implementation!", cont);
-            KEnvironment local = new KEnvironment(staticenv);
-            if (!(EFormal is KIgnore))
-                local.Bind(((KSymbol)EFormal).Value, env);
-            BindFormalTree(Formals, operands, local);
-            return CPS.PassTo<KObject>(() => Evaluator.rceval(Expr, local, cont));
         }
 
         public override bool CompareTo(KObject other)

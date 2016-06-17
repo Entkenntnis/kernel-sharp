@@ -2,7 +2,7 @@
 
 namespace Kernel
 {
-    public class PVau : KOperative
+    public class PVau : POperative
     {
         public override RecursionResult<KObject> Combine(KObject args, KEnvironment env, Continuation<KObject> cont)
         {
