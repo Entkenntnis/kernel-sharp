@@ -11,7 +11,7 @@ namespace Kernel
             var recursionResult = func();
             do
             {
-                if (recursionResult.Cont.isError)
+                if (recursionResult.Cont != null && recursionResult.Cont.isError)
                 {
                     string message =  recursionResult.Result is KObject ? (recursionResult.Result as KObject).Display() : recursionResult.ToString();
                     // get call stack!
@@ -36,7 +36,7 @@ namespace Kernel
                     else
                     {
                         // pops one level from the stack
-                        recursionResult = recursionResult.Cont.NextStep(recursionResult.Result, recursionResult.Cont);
+                        recursionResult = recursionResult.Cont.NextStep(recursionResult.Result);
                     }
                 }
                 else
@@ -59,7 +59,7 @@ namespace Kernel
 
         public static RecursionResult<KObject> Error(KObject message, Continuation<KObject> cont)
         {
-            Continuation<KObject> cc = new Continuation<KObject>((x, ctct) =>
+            Continuation<KObject> cc = new Continuation<KObject>((x) =>
                 {
                     return null;
                 }, cont, null);

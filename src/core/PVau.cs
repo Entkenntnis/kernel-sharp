@@ -6,14 +6,14 @@ namespace Kernel
     {
         public override RecursionResult<KObject> Combine(KObject args, KEnvironment env, Continuation<KObject> cont)
         {
-            var res = CheckParameter(args, 3, "$vau");
+            var res = PHelper.CheckParameter(args, 3, "$vau");
             if (res != null)
                 return CPS.Error(res, cont);
             try
             {
-                KObject formalt = First(args), eformal = Second(args), expr = Third(args);
+                KObject formalt = PHelper.First(args), eformal = PHelper.Second(args), expr = PHelper.Third(args);
                 KOperative op = new KOperative(formalt, eformal, expr, env);
-                return Return(op, cont);
+                return PHelper.Return(op, cont);
             }
             catch (Exception e)
             {

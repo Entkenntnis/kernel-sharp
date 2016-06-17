@@ -14,9 +14,9 @@ namespace Kernel
         }
         public KOperative(KObject formals, KObject eformal, KObject expr, KEnvironment env)
         {
-            Formals = KPair.CopyEsImmutable(formals);
+            Formals = formals;
             EFormal = eformal;
-            Expr = KPair.CopyEsImmutable(expr);
+            Expr = expr;
             if (!(eformal is KIgnore || eformal is KSymbol))
                 throw new RuntimeException("Can't construct operative, type mismatch of eformal");
             var lst = CheckFormalTree(Formals);
@@ -84,58 +84,6 @@ namespace Kernel
                 local.Bind(((KSymbol)EFormal).Value, env);
             BindFormalTree(Formals, operands, local);
             return CPS.Next<KObject>(() => Evaluator.rceval(Expr, local, cont), cont);
-        }
-        protected RecursionResult<KObject> Return(KObject obj, Continuation<KObject> cont)
-        {
-            return CPS.Return(obj, cont);
-        }
-        protected RecursionResult<KObject> ReturnBool(bool b, Continuation<KObject> cont)
-        {
-            return Return(new KBoolean(b), cont);
-        }
-        protected string CheckParameter(KObject p, int len, string name)
-        {
-            int actLen = KPair.Length(p);
-            if (actLen != len)
-            {
-                return name + ": mismatching number of ops, expected " + len + ", got " + actLen;
-            }
-            return null;
-        }
-        protected KObject First(KObject p)
-        {
-            return ((KPair)p).Car;
-        }
-        protected KObject Second(KObject p)
-        {
-            return ((KPair)((KPair)p).Cdr).Car;
-        }
-        protected KObject Third(KObject p)
-        {
-            return (((KPair)((KPair)p).Cdr).Cdr as KPair).Car;
-        }
-        protected RecursionResult<KObject> Predicate(KObject args, string name, Type t, Continuation<KObject> cont)
-        {
-            int len = KPair.Length(args);
-            if (len == -1)
-                return CPS.Error(name + ": parameter is not a list", cont);
-            else
-            {
-                bool result = true;
-                try
-                {
-                KPair.Foreach(x =>
-                    {
-                        if (!x.GetType().Equals(t))
-                            result = false;
-                    }, args);
-                }
-                catch (Exception e)
-                {
-                    return CPS.Error(e.Message, cont);
-                }
-                return ReturnBool(result, cont);
-            }
         }
 
         public override bool CompareTo(KObject other)

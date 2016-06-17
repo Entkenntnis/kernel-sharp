@@ -30,7 +30,7 @@ namespace Kernel
                 KPair p = datum as KPair;
 
                 // this function get called when the operator is evaluated to f
-                var childCont = new Continuation<KObject>((f, unused) =>
+                var childCont = new Continuation<KObject>((f) =>
                     {
                         if (f is KOperative)
                         {
@@ -44,35 +44,26 @@ namespace Kernel
                             }
                             KPair ops = p.Cdr as KPair;
                             LinkedList<KObject> input = new LinkedList<KObject>();
-                            KObject placeholder = KPair.Map(x =>
+                            KPair.Foreach(x =>
                                 {
                                     input.AddLast(x);
-                                    return new KInert();
                                 }, ops);
                             LinkedList<KObject> pairs = new LinkedList<KObject>();
-                            Func<KObject, Continuation<KObject>,  RecursionResult<KObject>> recursion = null;
+                            Func<KObject,  RecursionResult<KObject>> recursion = null;
 
                             // this continuation is called with the next argument evaled to x. Place next value
-                            recursion = (x, ctxt) =>
+                            recursion = (x) =>
                                 {
-                                    if (input == null)
-                                    {
-                                        input = CopyLL(ctxt._RemainingObjs);
-                                        placeholder = ctxt._Placeholder;
-                                        pairs = CopyLL(ctxt._Pairs);
-                                    }
                                     pairs.AddLast(x);
                                     if (input.Count == 0)
                                     {
                                         // we are finished
-                                        KObject structure = KPair.Map(z =>
-                                            {
-                                                KObject t = pairs.First.Value;
-                                                pairs.RemoveFirst();
-                                                return t;
-                                            }, placeholder);
-                                        input = null;
-                                        return ((KApplicative)f).Combine(structure, env, cont);
+                                        KObject output = new KNil();
+                                        while(pairs.Count > 0) {
+                                            output = new KPair(pairs.Last.Value, output);
+                                            pairs.RemoveLast();
+                                        }
+                                        return ((KApplicative)f).Combine(output, env, cont);
                                     }
                                     else
                                     {
@@ -80,19 +71,13 @@ namespace Kernel
                                         KObject next = input.First.Value;
                                         input.RemoveFirst();
                                         var cc2 = new Continuation<KObject>(recursion, cont, p);
-                                        cc2._Placeholder = placeholder;
-                                        cc2._RemainingObjs = input;
-                                        cc2._Pairs = pairs;
                                         return CPS.Next(() => rceval(next, env, cc2), cc2);
                                     }
                                 };
                             KObject next2 = input.First.Value;
                             input.RemoveFirst();
                             var cc = new Continuation<KObject>(recursion, cont, p);
-                            cc._Placeholder = placeholder;
-                            cc._RemainingObjs = input;
-                            cc._Pairs = pairs;
-                            return CPS.Next(() => rceval(next2, env, cc), cc);
+                            return CPS.Next(() => rceval(next2, env, cc), null);
                         }
                         return CPS.Error("Unsuitable operation", cont);
                     }, cont, p.Car);

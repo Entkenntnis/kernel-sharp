@@ -167,13 +167,13 @@ namespace Kernel
                 int index = content.Count - 1;
                 KPair tail;
                 if (dotted) {
-                    tail = new KPair(content[index - 1] as KObject, content[index] as KObject, false);
+                    tail = new KPair(content[index - 1] as KObject, content[index] as KObject);
                     index -= 2;
                 } else {
-                    tail = new KPair(content[index--] as KObject, new KNil(), false);
+                    tail = new KPair(content[index--] as KObject, new KNil());
                 }
                 for (int i = index; i >= 0; i--) {
-                    tail = new KPair(content[i] as KObject, tail, false);
+                    tail = new KPair(content[i] as KObject, tail);
                 }
                 return tail;
             }

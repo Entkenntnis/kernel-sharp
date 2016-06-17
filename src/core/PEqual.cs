@@ -28,12 +28,12 @@ namespace Kernel
         }
         public override RecursionResult<KObject> Combine(KObject args, KEnvironment env, Continuation<KObject> cont)
         {
-            var res = CheckParameter(args, 2, "equal?");
+            var res = PHelper.CheckParameter(args, 2, "equal?");
             if (res != null)
                 return CPS.Error(res, cont);
-            KObject a = First(args);
-            KObject b = Second(args);
-            return ReturnBool(CompareEqual(a, b, new List<KObject>()), cont);
+            KObject a = PHelper.First(args);
+            KObject b = PHelper.Second(args);
+            return PHelper.ReturnBool(CompareEqual(a, b, new List<KObject>()), cont);
         }
     }
 }

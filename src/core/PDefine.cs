@@ -6,11 +6,11 @@ namespace Kernel
     {
         public override RecursionResult<KObject> Combine(KObject args, KEnvironment env, Continuation<KObject> cont)
         {
-            var res = CheckParameter(args, 2, "$define!");
+            var res = PHelper.CheckParameter(args, 2, "$define!");
             if (res != null)
                 return CPS.Error(res, cont);
-            KObject definand = First(args), expr = Second(args);
-            var cc = new Continuation<KObject>((e, ctxt) =>
+            KObject definand = PHelper.First(args), expr = PHelper.Second(args);
+            var cc = new Continuation<KObject>((e) =>
                 {
                     try
                     {
@@ -20,7 +20,7 @@ namespace Kernel
                     {
                         return CPS.Error(ex.Message, cont);
                     }
-                    return Return(new KInert(), cont);
+                    return PHelper.Return(new KInert(), cont);
                 }, cont, expr);
             return CPS.Next(() => Evaluator.rceval(expr, env, cc), cc);        
         }
