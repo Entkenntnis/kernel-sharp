@@ -34,6 +34,7 @@ namespace Kernel
             Console.WriteLine("Welcome to Kernel#harp! Call (exit) to quit.\n");
 
             Interpreter.LoadModule(new CoreModule());
+            Interpreter.LoadModule(new NumberModule());
 
             // testing the interpreter
             args = new string[]{ "($define! y (map cons ($quote (a b c)) ($quote (d e f))))" };

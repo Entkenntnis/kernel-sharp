@@ -14,17 +14,7 @@ namespace Kernel
                 if (recursionResult.Cont != null && recursionResult.Cont.isError)
                 {
                     string message =  recursionResult.Cont.Context.ToString();
-                    // get call stack!
-                    StringBuilder cs = new StringBuilder();
-                    cs.AppendLine("Backtrace:");
-                    var cc = recursionResult.Cont.Parent;
-                    while (cc.Context != null)
-                    {
-                        cs.AppendLine(cc.Context.ToString());
-                        cc = cc.Parent;
-                    }
-                    cs.Append("------------");
-                    throw new RuntimeException(message + "\n" + cs.ToString());
+                    throw new RuntimeException("\n" + message + "\n");
                 }
                 if (recursionResult.Type == RecursionType.Return)
                 {

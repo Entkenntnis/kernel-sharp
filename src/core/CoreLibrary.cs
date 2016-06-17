@@ -153,10 +153,10 @@ making this more atomic, avoid $lambda
 ($define! $vau1 $vau)
 
 ($define! $vau
-             ($vau1 (formals eformal . body) env
-                (eval (cons $vau1 (cons formals (cons eformal
-                           (cons (cons $sequence body)()))))
-                      env)))
+ ($vau1 (formals eformal . body) env
+    (eval (cons $vau1 (cons formals (cons eformal
+               (cons (cons $sequence body)()))))
+          env)))
 
 ($define! $lambda
    ($vau (formals . body) env
@@ -253,7 +253,17 @@ making this more atomic, avoid $lambda
    ($vau (bindings . body) env
       (eval (cons (list* $lambda (map car bindings) body)
                   (map cadr bindings))
-            env)))"/*
+            env)))"
+
+
+
+
+
+
+
+
+
+            /*
 
 
 

@@ -98,7 +98,7 @@ namespace Kernel
                     datum = Evaluator.Eval(datum, env);
                     Console.WriteLine("\n" + datum.Write() + "\n");
                 } catch (RuntimeException e) {
-                    Console.WriteLine("RuntimeException: " + e.Message);
+                    Console.WriteLine("\nRuntimeException: " + e.Message);
                 }
                 /*catch (Exception e)
                 {

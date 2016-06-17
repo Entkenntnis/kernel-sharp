@@ -22,11 +22,6 @@ namespace Kernel
 
         public abstract string Print(bool quoteStrings);
 
-        public virtual string Print(bool quoteStrings, List<KObject> visited)
-        {
-            return Print(quoteStrings);
-        }
-
         public abstract bool CompareTo(KObject other);
 
         public override string ToString()

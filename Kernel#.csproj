@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -70,11 +71,18 @@
     <Compile Include="src\core\PHelper.cs" />
     <Compile Include="src\core\POperative.cs" />
     <Compile Include="src\core\CoreModule.cs" />
+    <Compile Include="src\extensions\numbers\NumberModule.cs" />
+    <Compile Include="src\extensions\numbers\KDouble.cs" />
+    <Compile Include="src\extensions\numbers\KInteger.cs" />
+    <Compile Include="src\extensions\numbers\PIntegerp.cs" />
+    <Compile Include="src\extensions\numbers\PDoublep.cs" />
+    <Compile Include="src\extensions\numbers\PInteger2Double.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="src\CPS\" />
     <Folder Include="src\Parser\" />
     <Folder Include="src\extensions\" />
+    <Folder Include="src\extensions\numbers\" />
   </ItemGroup>
 </Project>
