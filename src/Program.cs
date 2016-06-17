@@ -35,6 +35,7 @@ namespace Kernel
 
             Interpreter.LoadModule(new CoreModule());
             Interpreter.LoadModule(new NumberModule());
+            Interpreter.ExtendGroundEnv("handle", new PHandler());
 
             // testing the interpreter
             args = new string[]{ "($define! y (map cons ($quote (a b c)) ($quote (d e f))))" };

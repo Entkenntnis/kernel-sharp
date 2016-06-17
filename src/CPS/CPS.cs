@@ -14,7 +14,15 @@ namespace Kernel
                 if (recursionResult.Cont != null && recursionResult.Cont.isError)
                 {
                     string message =  recursionResult.Cont.Context.ToString();
-                    throw new RuntimeException(message + "\n");
+                    var c = recursionResult.Cont;
+                    while (c != null && c.Parent != null && !c.isHandler)
+                        c = c.Parent;
+                    if (c == null || c.NextStep == null)
+                        throw new RuntimeException(message + "\n");
+                    else {
+                        c.Context = message;
+                        recursionResult = c.NextStep(default(T));
+                    }
                 }
                 if (recursionResult.Type == RecursionType.Return)
                 {
@@ -26,7 +34,10 @@ namespace Kernel
                     else
                     {
                         // pops one level from the stack
-                        recursionResult = recursionResult.Cont.NextStep(recursionResult.Result);
+                        var nextC = recursionResult.Cont;
+                        while (nextC.isHandler)
+                            nextC = nextC.Parent;
+                        recursionResult = nextC.NextStep(recursionResult.Result);
                     }
                 }
                 else
@@ -67,6 +78,22 @@ namespace Kernel
             return new Continuation<T>(null, null, null);
         }
 
+    }
+
+    public class PHandler : POperative
+    {
+        public override RecursionResult<KObject> Combine(KObject args, KEnvironment env, Continuation<KObject> cont)
+        {
+            KPair p = args as KPair;
+
+            Continuation<KObject> c = null;
+            c = new Continuation<KObject>((x) => {
+                Console.WriteLine("we handle the error!");
+                return CPS.PassTo(() => Evaluator.rceval(new KPair(p.Car, new KPair(new KDouble(42.0), new KNil())), env, cont));
+            }, cont, "handler");
+            c.isHandler = true;
+            return CPS.PassTo(() => Evaluator.rceval(p.Cdr, env, c));
+        }
     }
 
 

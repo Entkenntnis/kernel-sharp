@@ -18,10 +18,11 @@ namespace Kernel
         public object Context
         {
             get;
-            private set;
+            set;
         }
         //hacky
         public bool isError = false;
+        public bool isHandler = false;
         public Continuation(Func<T, RecursionResult<T>> next, Continuation<T> parent, object context)
         {
             NextStep = next;
