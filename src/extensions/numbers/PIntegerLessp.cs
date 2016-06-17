@@ -2,17 +2,17 @@
 
 namespace Kernel
 {
-    public class PIntegerAdd : POperative
+    public class PIntegerLessp : POperative
     {
         public override RecursionResult<KObject> Combine(KObject args, KEnvironment env, Continuation<KObject> cont)
         {
-            return PHelper.Do("integer-add", cont, () => {
+            return PHelper.Do("integer-less?", cont, () => {
                 PHelper.CheckParameter(args, 2);
                 KInteger a = PHelper.First(args) as KInteger;
                 KInteger b = PHelper.Second(args) as KInteger;
                 PHelper.Check(a);
                 PHelper.Check(b);
-                return new KInteger(a.Value + b.Value);
+                return a.Value < b.Value;
             });
         }
     }

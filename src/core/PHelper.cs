@@ -62,6 +62,11 @@ namespace Kernel
                 throw new RuntimeException("mismatching number of ops, expected " + len + ", got " + actLen);
             }
         }
+        public static void Check(object obj)
+        {
+            if (null == obj)
+                throw new RuntimeException("wrong type");
+        }
     }
 }
 

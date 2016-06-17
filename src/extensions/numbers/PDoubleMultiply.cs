@@ -2,17 +2,17 @@
 
 namespace Kernel
 {
-    public class PIntegerAdd : POperative
+    public class PDoubleMultiply : POperative
     {
         public override RecursionResult<KObject> Combine(KObject args, KEnvironment env, Continuation<KObject> cont)
         {
-            return PHelper.Do("integer-add", cont, () => {
+            return PHelper.Do("double-multiply", cont, () => {
                 PHelper.CheckParameter(args, 2);
-                KInteger a = PHelper.First(args) as KInteger;
-                KInteger b = PHelper.Second(args) as KInteger;
+                KDouble a = PHelper.First(args) as KDouble;
+                KDouble b = PHelper.Second(args) as KDouble;
                 PHelper.Check(a);
                 PHelper.Check(b);
-                return new KInteger(a.Value + b.Value);
+                return new KDouble(a.Value * b.Value);
             });
         }
     }

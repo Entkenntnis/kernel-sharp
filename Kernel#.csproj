@@ -79,6 +79,17 @@
     <Compile Include="src\extensions\numbers\PInteger2Double.cs" />
     <Compile Include="src\extensions\numbers\PDouble2Integer.cs" />
     <Compile Include="src\extensions\numbers\PIntegerAdd.cs" />
+    <Compile Include="src\extensions\numbers\PIntegerSubtract.cs" />
+    <Compile Include="src\extensions\numbers\PIntegerDivide.cs" />
+    <Compile Include="src\extensions\numbers\PIntegerMultiply.cs" />
+    <Compile Include="src\extensions\numbers\PIntegerLessp.cs" />
+    <Compile Include="src\extensions\numbers\PDoubleAdd.cs" />
+    <Compile Include="src\extensions\numbers\PDoubleSubtract.cs" />
+    <Compile Include="src\extensions\numbers\PDoubleMultiply.cs" />
+    <Compile Include="src\extensions\numbers\PDoubleDivide.cs" />
+    <Compile Include="src\extensions\numbers\PDoubleLessp.cs" />
+    <Compile Include="src\extensions\numbers\PDoubleRound.cs" />
+    <Compile Include="src\extensions\numbers\NumbersLibrary.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

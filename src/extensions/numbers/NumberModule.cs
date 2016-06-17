@@ -37,6 +37,17 @@ namespace Kernel
             Interpreter.ExtendGroundEnv("integer->double", new KApplicative(new PInteger2Double()));
             Interpreter.ExtendGroundEnv("double->integer", new KApplicative(new PDouble2Integer()));
             Interpreter.ExtendGroundEnv("integer-add", new KApplicative(new PIntegerAdd()));
+            Interpreter.ExtendGroundEnv("integer-subtract", new KApplicative(new PIntegerSubtract()));
+            Interpreter.ExtendGroundEnv("integer-multiply", new KApplicative(new PIntegerMultiply()));
+            Interpreter.ExtendGroundEnv("integer-divide", new KApplicative(new PIntegerDivide()));
+            Interpreter.ExtendGroundEnv("integer-less?", new KApplicative(new PIntegerLessp()));
+            Interpreter.ExtendGroundEnv("double-add", new KApplicative(new PDoubleAdd()));
+            Interpreter.ExtendGroundEnv("double-subtract", new KApplicative(new PDoubleSubtract()));
+            Interpreter.ExtendGroundEnv("double-multiply", new KApplicative(new PDoubleMultiply()));
+            Interpreter.ExtendGroundEnv("double-divide", new KApplicative(new PDoubleDivide()));
+            Interpreter.ExtendGroundEnv("double-less?", new KApplicative(new PDoubleLessp()));
+            Interpreter.ExtendGroundEnv("double-round", new KApplicative(new PDoubleRound()));
+            Interpreter.LoadLibrary(new NumbersLibrary());
         }
     }
 }
