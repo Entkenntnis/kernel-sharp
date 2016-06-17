@@ -38,6 +38,30 @@ namespace Kernel
         {
             return CPS.Error<KObject>(message, cont);
         }
+
+        public static RecursionResult<KObject> Do(string name, Continuation<KObject> cont, Func<object> f)
+        {
+            object result = null;
+            try {
+                result = f();
+            } catch (RuntimeException e) {
+                return PHelper.Error(name + ": " + e.Message, cont);
+            }
+            if (result is KObject)
+                return PHelper.Return(result as KObject, cont);
+            else if (result is bool)
+                return PHelper.ReturnBool((bool)result, cont);
+            else
+                return PHelper.Return(new KInert(), cont);
+        }
+        public static void CheckParameter(KObject p, int len)
+        {
+            int actLen = KPair.Length(p);
+            if (actLen != len)
+            {
+                throw new RuntimeException("mismatching number of ops, expected " + len + ", got " + actLen);
+            }
+        }
     }
 }
 

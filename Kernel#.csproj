@@ -78,6 +78,7 @@
     <Compile Include="src\extensions\numbers\PDoublep.cs" />
     <Compile Include="src\extensions\numbers\PInteger2Double.cs" />
     <Compile Include="src\extensions\numbers\PDouble2Integer.cs" />
+    <Compile Include="src\extensions\numbers\PIntegerAdd.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
