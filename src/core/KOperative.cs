@@ -83,7 +83,7 @@ namespace Kernel
             if (!(EFormal is KIgnore))
                 local.Bind(((KSymbol)EFormal).Value, env);
             BindFormalTree(Formals, operands, local);
-            return CPS.Next<KObject>(() => Evaluator.rceval(Expr, local, cont), cont);
+            return CPS.PassTo<KObject>(() => Evaluator.rceval(Expr, local, cont));
         }
 
         public override bool CompareTo(KObject other)

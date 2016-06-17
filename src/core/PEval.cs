@@ -12,7 +12,7 @@ namespace Kernel
             KObject expr = PHelper.First(args), envir = PHelper.Second(args);
             if (!(envir is KEnvironment))
                 return CPS.Error("eval: not an environment", cont);
-            return CPS.Next<KObject>(() => Evaluator.rceval(expr, (KEnvironment)envir, cont), cont);
+            return CPS.PassTo<KObject>(() => Evaluator.rceval(expr, (KEnvironment)envir, cont));
         }
     }
 }

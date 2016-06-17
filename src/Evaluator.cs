@@ -71,17 +71,17 @@ namespace Kernel
                                         KObject next = input.First.Value;
                                         input.RemoveFirst();
                                         var cc2 = new Continuation<KObject>(recursion, cont, p);
-                                        return CPS.Next(() => rceval(next, env, cc2), cc2);
+                                        return CPS.PassTo(() => rceval(next, env, cc2));
                                     }
                                 };
                             KObject next2 = input.First.Value;
                             input.RemoveFirst();
                             var cc = new Continuation<KObject>(recursion, cont, p);
-                            return CPS.Next(() => rceval(next2, env, cc), null);
+                            return CPS.PassTo(() => rceval(next2, env, cc));
                         }
                         return CPS.Error("Unsuitable operation", cont);
                     }, cont, p.Car);
-                return CPS.Next(() => rceval(p.Car, env, childCont), childCont);
+                return CPS.PassTo(() => rceval(p.Car, env, childCont));
             }
             else if (datum is KSymbol)
             {

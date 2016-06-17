@@ -22,7 +22,7 @@ namespace Kernel
                     }
                     return PHelper.Return(new KInert(), cont);
                 }, cont, expr);
-            return CPS.Next(() => Evaluator.rceval(expr, env, cc), cc);        
+            return CPS.PassTo(() => Evaluator.rceval(expr, env, cc));        
         }
     }
 }

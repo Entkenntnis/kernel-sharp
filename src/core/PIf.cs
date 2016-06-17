@@ -17,12 +17,12 @@ namespace Kernel
                     else
                     {
                         if (((KBoolean)p).Value)
-                            return CPS.Next<KObject>(() => Evaluator.rceval(tr, env, cont), cont);
+                            return CPS.PassTo<KObject>(() => Evaluator.rceval(tr, env, cont));
                         else
-                            return CPS.Next<KObject>(() => Evaluator.rceval(fl, env, cont), cont);
+                            return CPS.PassTo<KObject>(() => Evaluator.rceval(fl, env, cont));
                     }
                 }, cont, pred);
-            return CPS.Next(() => Evaluator.rceval(pred, env, cc), cc);            
+            return CPS.PassTo(() => Evaluator.rceval(pred, env, cc));            
         }
     }
 }
