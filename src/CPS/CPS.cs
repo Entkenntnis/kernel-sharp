@@ -14,7 +14,7 @@ namespace Kernel
                 if (recursionResult.Cont != null && recursionResult.Cont.isError)
                 {
                     string message =  recursionResult.Cont.Context.ToString();
-                    throw new RuntimeException("\n" + message + "\n");
+                    throw new RuntimeException(message + "\n");
                 }
                 if (recursionResult.Type == RecursionType.Return)
                 {

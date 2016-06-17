@@ -35,6 +35,7 @@ namespace Kernel
             Interpreter.ExtendGroundEnv("integer?", new KApplicative(new PIntegerp()));
             Interpreter.ExtendGroundEnv("double?", new KApplicative(new PDoublep()));
             Interpreter.ExtendGroundEnv("integer->double", new KApplicative(new PInteger2Double()));
+            Interpreter.ExtendGroundEnv("double->integer", new KApplicative(new PDouble2Integer()));
         }
     }
 }
