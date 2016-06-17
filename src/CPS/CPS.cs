@@ -26,7 +26,10 @@ namespace Kernel
                 }
                 if (recursionResult.Type == RecursionType.Return)
                 {
-                    if (recursionResult.Cont.Context == null)
+                    var nextC = recursionResult.Cont;
+                    while (nextC.isHandler)
+                        nextC = nextC.Parent;
+                    if (nextC.Context == null)
                     {
                         
                         return recursionResult.Result;
@@ -34,9 +37,6 @@ namespace Kernel
                     else
                     {
                         // pops one level from the stack
-                        var nextC = recursionResult.Cont;
-                        while (nextC.isHandler)
-                            nextC = nextC.Parent;
                         recursionResult = nextC.NextStep(recursionResult.Result);
                     }
                 }
@@ -88,11 +88,10 @@ namespace Kernel
 
             Continuation<KObject> c = null;
             c = new Continuation<KObject>((x) => {
-                Console.WriteLine("we handle the error!");
                 return CPS.PassTo(() => Evaluator.rceval(new KPair(p.Car, new KPair(new KDouble(42.0), new KNil())), env, cont));
-            }, cont, "handler");
+            }, cont, "error-handler");
             c.isHandler = true;
-            return CPS.PassTo(() => Evaluator.rceval(p.Cdr, env, c));
+            return CPS.PassTo(() => Evaluator.rceval(PHelper.Second(p), env, c));
         }
     }
 
