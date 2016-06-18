@@ -49,6 +49,11 @@ namespace Kernel
             Interpreter.ExtendGroundEnv("double-round", new KApplicative(new PDoubleRound()));
             Interpreter.LoadLibrary(new NumbersLibrary());
         }
+
+        public override string[] DependOn()
+        {
+            return new string[]{new CoreModule().ToString()};
+        }
     }
 }
 

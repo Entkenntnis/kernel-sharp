@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Collections.Generic;
 
 namespace Kernel
 {
@@ -8,6 +9,7 @@ namespace Kernel
         private static bool initialized = false;
         private static KEnvironment env;
         private static KEnvironment GroundEnv;
+        private static List<string> loadedModules;
 
         private static void init()
         {
@@ -15,6 +17,7 @@ namespace Kernel
                 return;
             GroundEnv = new KEnvironment(null);
             env = new KEnvironment(GroundEnv);
+            loadedModules = new List<string>();
             initialized = true;
         }
 
@@ -41,6 +44,19 @@ namespace Kernel
         public static void LoadModule(Module mod)
         {
             init();
+            string name = mod.ToString();
+            if (loadedModules.Contains(name)) {
+                Console.WriteLine(name + " already loaded");
+            }
+            loadedModules.Add(name);
+            var lst = mod.DependOn();
+            foreach (var dep in lst) {
+                if (!loadedModules.Contains(dep)) {
+                    Console.Write("Failed to load " + name + ", ");
+                    Console.WriteLine("missing dependency: " + dep);
+                    return;
+                }
+            }
             mod.Init();
         }
 

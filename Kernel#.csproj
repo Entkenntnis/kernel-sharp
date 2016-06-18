@@ -90,6 +90,11 @@
     <Compile Include="src\extensions\numbers\PDoubleLessp.cs" />
     <Compile Include="src\extensions\numbers\PDoubleRound.cs" />
     <Compile Include="src\extensions\numbers\NumbersLibrary.cs" />
+    <Compile Include="src\extensions\string\KString.cs" />
+    <Compile Include="src\extensions\string\StringModule.cs" />
+    <Compile Include="src\extensions\console\ConsoleModule.cs" />
+    <Compile Include="src\extensions\console\PDisplay.cs" />
+    <Compile Include="src\extensions\console\PWrite.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -97,5 +102,7 @@
     <Folder Include="src\Parser\" />
     <Folder Include="src\extensions\" />
     <Folder Include="src\extensions\numbers\" />
+    <Folder Include="src\extensions\string\" />
+    <Folder Include="src\extensions\console\" />
   </ItemGroup>
 </Project>

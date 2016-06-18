@@ -51,6 +51,8 @@ namespace Kernel
                 return PHelper.Return(result as KObject, cont);
             else if (result is bool)
                 return PHelper.ReturnBool((bool)result, cont);
+            else if (result is RecursionResult<KObject>)
+                return result as RecursionResult<KObject>;
             else
                 return PHelper.Return(new KInert(), cont);
         }

@@ -19,6 +19,11 @@ namespace Kernel
 
             Interpreter.LoadLibrary(new CoreLibrary());
         }
+
+        public override string[] DependOn()
+        {
+            return new string[]{};
+        }
     }
 }
 
