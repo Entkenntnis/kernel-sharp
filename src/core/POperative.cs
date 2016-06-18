@@ -2,7 +2,7 @@
 
 namespace Kernel
 {
-    public abstract class POperative : KOperative
+    public abstract class POperative : KOperative, ICombinable
     {
         public virtual RecursionResult<KObject> Combine(KObject args, KEnvironment env, Continuation<KObject> cont)
         {

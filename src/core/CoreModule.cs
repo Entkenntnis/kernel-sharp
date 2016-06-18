@@ -126,7 +126,7 @@ making this more atomic, avoid $lambda
 ($define! $quote ($vau (x) #ignore x))
 
 ; library implementation of wrap. Functional, but very slow. Currently disabled.
-($define! wrap
+($define! xwrap
   ($vau (op) env
     ($vau args a-env
       ((wrap1 ($vau #ignore #ignore

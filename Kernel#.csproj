@@ -80,6 +80,7 @@
     <Compile Include="src\extensions\load\PLoad.cs" />
     <Compile Include="src\extensions\fastwrap\FastWrapModule.cs" />
     <Compile Include="src\extensions\fastwrap\PWrap.cs" />
+    <Compile Include="src\core\ICombinable.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

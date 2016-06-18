@@ -95,8 +95,8 @@ namespace Kernel
         private static RecursionResult<KObject> combineOp(KOperative op, KObject operands, KEnvironment env, Continuation<KObject> cont)
         {
             if (null == op.Expr) {
-                if (op is POperative) {
-                    return (op as POperative).Combine(operands, env, cont);
+                if (op is ICombinable) {
+                    return (op as ICombinable).Combine(operands, env, cont);
                 }
                 return CPS.Error<KObject>("Primitive without implementation!", cont);
             }
