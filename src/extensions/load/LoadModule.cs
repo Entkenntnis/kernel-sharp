@@ -15,7 +15,7 @@ namespace Kernel
 
         public override string[] DependOn()
         {
-            return new string[]{new CoreModule().ToString(), new StringModule().ToString()};
+            return new string[]{new StringModule().ToString()};
         }
     }
 }

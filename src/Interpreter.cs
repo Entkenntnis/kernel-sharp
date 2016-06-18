@@ -38,12 +38,6 @@ namespace Kernel
             GroundEnv.Bind(symbol, value);
         }
 
-        private static void LoadLibrary(Library lib)
-        {
-            init();
-
-        }
-
         public static void LoadModule(Module mod)
         {
             init();

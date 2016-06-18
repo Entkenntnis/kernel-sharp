@@ -33,6 +33,7 @@ namespace Kernel
         {
             Console.WriteLine("Welcome to Kernel#harp! Call (exit) to quit.\n");
 
+            Interpreter.LoadModule(new FastWrapModule());
             Interpreter.LoadModule(new CoreModule());
             Interpreter.LoadModule(new StringModule());
             Interpreter.LoadModule(new ConsoleModule());

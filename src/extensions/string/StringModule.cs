@@ -23,7 +23,7 @@ namespace Kernel
 
         public override string[] DependOn()
         {
-            return new string[]{new CoreModule().ToString()};
+            return new string[]{};
         }
     }
 }
