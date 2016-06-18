@@ -42,7 +42,6 @@
     <Compile Include="src\core\KCombiner.cs" />
     <Compile Include="src\core\KObject.cs" />
     <Compile Include="src\core\KEnvironment.cs" />
-    <Compile Include="src\core\CoreLibrary.cs" />
     <Compile Include="src\CPS\Continuation.cs" />
     <Compile Include="src\CPS\RecursionResult.cs" />
     <Compile Include="src\CPS\CPS.cs" />
@@ -66,7 +65,6 @@
     <Compile Include="src\core\PIf.cs" />
     <Compile Include="src\core\PDefine.cs" />
     <Compile Include="src\core\PVau.cs" />
-    <Compile Include="src\Library.cs" />
     <Compile Include="src\Module.cs" />
     <Compile Include="src\core\POperative.cs" />
     <Compile Include="src\core\CoreModule.cs" />

@@ -8,6 +8,10 @@ namespace Kernel
         public abstract void Init();
 
         public abstract string[] DependOn();
+
+        public virtual string getLibrary() {
+            return "";
+        }
     }
 }
 

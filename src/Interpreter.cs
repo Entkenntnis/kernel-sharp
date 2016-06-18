@@ -38,18 +38,10 @@ namespace Kernel
             GroundEnv.Bind(symbol, value);
         }
 
-        public static void LoadLibrary(Library lib)
+        private static void LoadLibrary(Library lib)
         {
             init();
-            try {
-                var lst = lib.getLibrary();
-                var objs = Parser.ParseAll(lst);
-                foreach (KObject item in objs) {
-                    Evaluator.Eval(item, GroundEnv);
-                }
-            } catch (ParseException e) {
-                Console.WriteLine("Library couldn't be loaded: " + e.Message + "\n");
-            }
+
         }
 
         public static void LoadModule(Module mod)
@@ -69,6 +61,15 @@ namespace Kernel
                 }
             }
             mod.Init();
+            try {
+                var lib = mod.getLibrary();
+                var objs = Parser.ParseAll(lib);
+                foreach (KObject item in objs) {
+                    Evaluator.Eval(item, GroundEnv);
+                }
+            } catch (ParseException e) {
+                Console.WriteLine("Library couldn't be loaded: " + e.Message + "\n");
+            }
         }
 
         public static KObject RunCode(string datum)
