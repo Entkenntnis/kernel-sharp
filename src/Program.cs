@@ -37,10 +37,11 @@ namespace Kernel
             Interpreter.LoadModule(new StringModule());
             Interpreter.LoadModule(new ConsoleModule());
             Interpreter.LoadModule(new ExceptionModule());
+            Interpreter.LoadModule(new LoadModule());
             //Interpreter.LoadModule(new NumberModule());
 
             // testing the interpreter
-            args = new string[]{ "($define! y (map cons ($quote (a b c)) ($quote (d e f))))" };
+            args = new string[]{ "(load \"/home/dal/Schreibtisch/kernel\")" };
 
             foreach (string datum in args) {
                 Interpreter.RunCode(datum);

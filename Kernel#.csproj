@@ -78,6 +78,8 @@
     <Compile Include="src\extensions\exception\ExceptionModule.cs" />
     <Compile Include="src\extensions\exception\PHandle.cs" />
     <Compile Include="src\extensions\exception\PRaise.cs" />
+    <Compile Include="src\extensions\load\LoadModule.cs" />
+    <Compile Include="src\extensions\load\PLoad.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -87,5 +89,6 @@
     <Folder Include="src\extensions\string\" />
     <Folder Include="src\extensions\console\" />
     <Folder Include="src\extensions\exception\" />
+    <Folder Include="src\extensions\load\" />
   </ItemGroup>
 </Project>
