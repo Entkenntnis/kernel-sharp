@@ -41,6 +41,7 @@ namespace Kernel
             Interpreter.LoadModule(new LoadModule());
             Interpreter.LoadModule(new NumbersModule());
             Interpreter.LoadModule(new TypesModule());
+            Interpreter.LoadModule(new OperatorsModule());
 
             // testing the interpreter
             args = new string[]{ "(load \"/home/dal/Schreibtisch/kernel\")" };
