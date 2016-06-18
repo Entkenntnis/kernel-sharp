@@ -10,8 +10,8 @@ namespace Kernel
 
         public override void Init()
         {
-            Interpreter.ExtendGroundEnv("display", new KApplicative(new PDisplay()));
-            Interpreter.ExtendGroundEnv("write", new KApplicative(new PWrite()));
+            Interpreter.AddOp(new PDisplay());
+            Interpreter.AddOp(new PWrite());
         }
 
         public override string[] DependOn()

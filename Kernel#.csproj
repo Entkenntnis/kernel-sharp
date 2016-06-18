@@ -68,28 +68,8 @@
     <Compile Include="src\core\PVau.cs" />
     <Compile Include="src\Library.cs" />
     <Compile Include="src\Module.cs" />
-    <Compile Include="src\core\PHelper.cs" />
     <Compile Include="src\core\POperative.cs" />
     <Compile Include="src\core\CoreModule.cs" />
-    <Compile Include="src\extensions\numbers\NumberModule.cs" />
-    <Compile Include="src\extensions\numbers\KDouble.cs" />
-    <Compile Include="src\extensions\numbers\KInteger.cs" />
-    <Compile Include="src\extensions\numbers\PIntegerp.cs" />
-    <Compile Include="src\extensions\numbers\PDoublep.cs" />
-    <Compile Include="src\extensions\numbers\PInteger2Double.cs" />
-    <Compile Include="src\extensions\numbers\PDouble2Integer.cs" />
-    <Compile Include="src\extensions\numbers\PIntegerAdd.cs" />
-    <Compile Include="src\extensions\numbers\PIntegerSubtract.cs" />
-    <Compile Include="src\extensions\numbers\PIntegerDivide.cs" />
-    <Compile Include="src\extensions\numbers\PIntegerMultiply.cs" />
-    <Compile Include="src\extensions\numbers\PIntegerLessp.cs" />
-    <Compile Include="src\extensions\numbers\PDoubleAdd.cs" />
-    <Compile Include="src\extensions\numbers\PDoubleSubtract.cs" />
-    <Compile Include="src\extensions\numbers\PDoubleMultiply.cs" />
-    <Compile Include="src\extensions\numbers\PDoubleDivide.cs" />
-    <Compile Include="src\extensions\numbers\PDoubleLessp.cs" />
-    <Compile Include="src\extensions\numbers\PDoubleRound.cs" />
-    <Compile Include="src\extensions\numbers\NumbersLibrary.cs" />
     <Compile Include="src\extensions\string\KString.cs" />
     <Compile Include="src\extensions\string\StringModule.cs" />
     <Compile Include="src\extensions\console\ConsoleModule.cs" />
@@ -101,7 +81,6 @@
     <Folder Include="src\CPS\" />
     <Folder Include="src\Parser\" />
     <Folder Include="src\extensions\" />
-    <Folder Include="src\extensions\numbers\" />
     <Folder Include="src\extensions\string\" />
     <Folder Include="src\extensions\console\" />
   </ItemGroup>

@@ -4,25 +4,24 @@ namespace Kernel
 {
     public class PDefine : POperative
     {
-        public override RecursionResult<KObject> Combine(KObject args, KEnvironment env, Continuation<KObject> cont)
+        public override string getName()
         {
-            var res = PHelper.CheckParameter(args, 2, "$define!");
-            if (res != null)
-                return PHelper.Error(res, cont);
-            KObject definand = PHelper.First(args), expr = PHelper.Second(args);
-            var cc = new Continuation<KObject>((e) =>
-                {
-                    try
-                    {
-                        Evaluator.BindFormalTree(definand, e, env);
-                    }
-                    catch (Exception ex)
-                    {
-                        return PHelper.Error(ex.Message, cont);
-                    }
-                    return PHelper.Return(new KInert(), cont);
-                }, cont, expr.Display());
-            return CPS.PassTo(() => Evaluator.rceval(expr, env, cc));        
+            return "$define!";
+        }
+
+        public override object Do(KObject args, KEnvironment env, Continuation<KObject> cont)
+        {
+            CPara(args, 2);
+            KObject definand = First(args), expr = Second(args);
+            var cc = new Continuation<KObject>((e) => {
+                try {
+                    Evaluator.BindFormalTree(definand, e, env);
+                } catch (Exception ex) {
+                    return CPS.Error<KObject>(ex.Message, cont);
+                }
+                return CPS.Return<KObject>(new KInert(), cont);
+            }, cont, expr.Display());
+            return CPS.PassTo(() => Evaluator.rceval(expr, env, cc)); 
         }
     }
 }

@@ -4,13 +4,15 @@ namespace Kernel
 {
     public class PDisplay : POperative
     {
-        public override RecursionResult<KObject> Combine(KObject args, KEnvironment env, Continuation<KObject> cont)
+        public override string getName()
         {
-            return PHelper.Do("display", cont, () => {
-                PHelper.CheckParameter(args, 1);
-                Console.WriteLine(PHelper.First(args).Display());
-                return new KInert();
-            });
+            return "display";
+        }
+        public override object Do(KObject args, KEnvironment env, Continuation<KObject> cont)
+        {
+            CPara(args, 1);
+            Console.WriteLine(First(args).Display());
+            return new KInert();
         }
     }
 }

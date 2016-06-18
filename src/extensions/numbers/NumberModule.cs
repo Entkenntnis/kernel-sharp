@@ -32,7 +32,7 @@ namespace Kernel
                     return new KDouble(d);
                 return null;
             }));
-            Interpreter.ExtendGroundEnv("integer?", new KApplicative(new PIntegerp()));
+            /*Interpreter.ExtendGroundEnv("integer?", new KApplicative(new PIntegerp()));
             Interpreter.ExtendGroundEnv("double?", new KApplicative(new PDoublep()));
             Interpreter.ExtendGroundEnv("integer->double", new KApplicative(new PInteger2Double()));
             Interpreter.ExtendGroundEnv("double->integer", new KApplicative(new PDouble2Integer()));
@@ -46,7 +46,7 @@ namespace Kernel
             Interpreter.ExtendGroundEnv("double-multiply", new KApplicative(new PDoubleMultiply()));
             Interpreter.ExtendGroundEnv("double-divide", new KApplicative(new PDoubleDivide()));
             Interpreter.ExtendGroundEnv("double-less?", new KApplicative(new PDoubleLessp()));
-            Interpreter.ExtendGroundEnv("double-round", new KApplicative(new PDoubleRound()));
+            Interpreter.ExtendGroundEnv("double-round", new KApplicative(new PDoubleRound()));*/
             Interpreter.LoadLibrary(new NumbersLibrary());
         }
 

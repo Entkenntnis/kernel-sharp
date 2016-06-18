@@ -10,12 +10,12 @@ namespace Kernel
 
         public override void Init()
         {
-            Interpreter.ExtendGroundEnv("equal?", new KApplicative(new PEqual()));
-            Interpreter.ExtendGroundEnv("cons", new KApplicative(new PCons()));
-            Interpreter.ExtendGroundEnv("eval", new KApplicative(new PEval()));
-            Interpreter.ExtendGroundEnv("$if", new PIf());
-            Interpreter.ExtendGroundEnv("$define!", new PDefine());
-            Interpreter.ExtendGroundEnv("$vau", new PVau());
+            Interpreter.AddOp(new PEqual());
+            Interpreter.AddOp(new PCons());
+            Interpreter.AddOp(new PEval());
+            Interpreter.AddOp(new PIf());
+            Interpreter.AddOp(new PDefine());
+            Interpreter.AddOp(new PVau());
 
             Interpreter.LoadLibrary(new CoreLibrary());
         }

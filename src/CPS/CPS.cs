@@ -82,16 +82,21 @@ namespace Kernel
 
     public class PHandler : POperative
     {
-        public override RecursionResult<KObject> Combine(KObject args, KEnvironment env, Continuation<KObject> cont)
+        public override string getName()
         {
-            KPair p = args as KPair;
+            return "$handle";
+        }
 
+        public override object Do(KObject args, KEnvironment env, Continuation<KObject> cont)
+        {
+            CPara(args, 2);
+            KPair p = args as KPair;
             Continuation<KObject> c = null;
             c = new Continuation<KObject>((x) => {
-                return CPS.PassTo(() => Evaluator.rceval(new KPair(p.Car, new KPair(new KDouble(42.0), new KNil())), env, cont));
+                return CPS.PassTo(() => Evaluator.rceval(new KPair(p.Car, new KPair(new KInert(), new KNil())), env, cont));
             }, cont, "error-handler");
             c.isHandler = true;
-            return CPS.PassTo(() => Evaluator.rceval(PHelper.Second(p), env, c));
+            return CPS.PassTo(() => Evaluator.rceval(Second(p), env, c));
         }
     }
 

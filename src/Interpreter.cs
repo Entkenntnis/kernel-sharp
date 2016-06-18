@@ -21,7 +21,18 @@ namespace Kernel
             initialized = true;
         }
 
-        public static void ExtendGroundEnv(string symbol, KObject value)
+        public static void AddOp(POperative op)
+        {
+            init();
+            string name = op.getName();
+            if (name.StartsWith("$"))
+                ExtendGroundEnv(name, op);
+            else
+                ExtendGroundEnv(name, new KApplicative(op));
+                
+        }
+
+        private static void ExtendGroundEnv(string symbol, KObject value)
         {
             init();
             GroundEnv.Bind(symbol, value);

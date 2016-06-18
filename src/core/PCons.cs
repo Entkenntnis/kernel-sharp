@@ -4,14 +4,15 @@ namespace Kernel
 {
     public class PCons : POperative
     {
-        public override RecursionResult<KObject> Combine(KObject args, KEnvironment env, Continuation<KObject> cont)
+        public override string getName()
         {
-            var res = PHelper.CheckParameter(args, 2, "cons");
-            if (res != null)
-                return PHelper.Error(res, cont);
-            KObject a = PHelper.First(args);
-            KObject b = PHelper.Second(args);
-            return PHelper.Return(new KPair(a, b), cont);
+            return "cons";
+        }
+
+        public override object Do(KObject args, KEnvironment env, Continuation<KObject> cont)
+        {
+            CPara(args, 2);
+            return new KPair(First(args), Second(args));
         }
     }
 }
