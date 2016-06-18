@@ -20,6 +20,8 @@ namespace Kernel
             var inex = First(args) as KDouble;
             Check(inex);
             double input = inex.Value;
+            if (Double.IsInfinity(input))
+                throw new RuntimeException("can not make infinity exact");
             bool negativ = false;
             if (input < 0) {
                 negativ = true;

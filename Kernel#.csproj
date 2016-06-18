@@ -88,6 +88,15 @@
     <Compile Include="src\extensions\numbers\PInexactp.cs" />
     <Compile Include="src\extensions\numbers\PExact2Inexact.cs" />
     <Compile Include="src\extensions\numbers\PInexact2Exact.cs" />
+    <Compile Include="src\extensions\types\TypesModule.cs" />
+    <Compile Include="src\extensions\types\PNullp.cs" />
+    <Compile Include="src\extensions\types\PBooleanp.cs" />
+    <Compile Include="src\extensions\types\PSymbolp.cs" />
+    <Compile Include="src\extensions\types\PPairp.cs" />
+    <Compile Include="src\extensions\types\PInertp.cs" />
+    <Compile Include="src\extensions\types\PIgnorep.cs" />
+    <Compile Include="src\extensions\types\PEnvironmentp.cs" />
+    <Compile Include="src\extensions\types\PCombinerp.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -100,5 +109,6 @@
     <Folder Include="src\extensions\load\" />
     <Folder Include="src\extensions\fastwrap\" />
     <Folder Include="src\extensions\numbers\" />
+    <Folder Include="src\extensions\types\" />
   </ItemGroup>
 </Project>
