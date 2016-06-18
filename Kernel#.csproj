@@ -81,6 +81,13 @@
     <Compile Include="src\extensions\fastwrap\FastWrapModule.cs" />
     <Compile Include="src\extensions\fastwrap\PWrap.cs" />
     <Compile Include="src\core\ICombinable.cs" />
+    <Compile Include="src\extensions\numbers\NumbersModule.cs" />
+    <Compile Include="src\extensions\numbers\KFraction.cs" />
+    <Compile Include="src\extensions\numbers\KDouble.cs" />
+    <Compile Include="src\extensions\numbers\PExactp.cs" />
+    <Compile Include="src\extensions\numbers\PInexactp.cs" />
+    <Compile Include="src\extensions\numbers\PExact2Inexact.cs" />
+    <Compile Include="src\extensions\numbers\PInexact2Exact.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -92,5 +99,6 @@
     <Folder Include="src\extensions\exception\" />
     <Folder Include="src\extensions\load\" />
     <Folder Include="src\extensions\fastwrap\" />
+    <Folder Include="src\extensions\numbers\" />
   </ItemGroup>
 </Project>
