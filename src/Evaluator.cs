@@ -70,7 +70,7 @@ namespace Kernel
                             var cc = new Continuation<KObject>(recursion, cont, p.Display());
                             return CPS.PassTo(() => rceval(next2, env, cc));
                         }
-                        return CPS.Error<KObject>("Unsuitable operation", cont);
+                        return CPS.Error<KObject>("Unsuitable operation of " + f.Write(), cont);
                     }, cont, p.Car.Display());
                 return CPS.PassTo(() => rceval(p.Car, env, childCont));
             }
@@ -98,7 +98,7 @@ namespace Kernel
                 if (op is ICombinable) {
                     return (op as ICombinable).Combine(operands, env, cont);
                 }
-                return CPS.Error<KObject>("Primitive without implementation!", cont);
+                return CPS.Error<KObject>("Primitive without implementation!" + op.Write(), cont);
             }
             KEnvironment local = new KEnvironment(op.staticenv);
             if (!(op.EFormal is KIgnore))
