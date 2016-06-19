@@ -108,8 +108,10 @@ namespace Kernel
         }
 
 
-        public static void BindFormalTree(KObject formal, KObject vals, KEnvironment env)
+        public static void BindFormalTree(KObject formal, KObject vals, KEnvironment env, KObject ctxt = null)
         {
+            if (ctxt == null)
+                ctxt = formal;
             if (formal is KSymbol)
             {
                 env.Bind(((KSymbol)formal).Value, vals);
@@ -122,11 +124,11 @@ namespace Kernel
             {
                 KPair f = formal as KPair;
                 KPair v = vals as KPair;
-                BindFormalTree(f.Car, v.Car, env);
-                BindFormalTree(f.Cdr, v.Cdr, env);
+                BindFormalTree(f.Car, v.Car, env, ctxt);
+                BindFormalTree(f.Cdr, v.Cdr, env, ctxt);
             }
             else
-                throw new RuntimeException("Can't bind formal tree!");
+                    throw new RuntimeException("Can't bind formal tree of " + ctxt.Write());
         }
     }
 }
