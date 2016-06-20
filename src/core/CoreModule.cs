@@ -111,35 +111,25 @@ making this more atomic, avoid $lambda
 */
 
 @"
-
-($define! wrap1
-  ($vau (op) env
-    ($vau (arg) a-env
-      (eval (cons op (cons (eval arg a-env) ())) env))))
-
-($define! car
-  (wrap1 ($vau ((x . #ignore)) #ignore x)))
- 
-($define! cdr
-  (wrap1 ($vau ((#ignore . x)) #ignore x)))
-
-($define! $quote ($vau (x) #ignore x))
-
-; library implementation of wrap. Functional, but very slow. Currently disabled.
+; library implementation of wrap. workable, but very slow. Currently disabled.
 ($define! xwrap
+ (($vau (wrap1) e
   ($vau (op) env
     ($vau args a-env
-      ((wrap1 ($vau #ignore #ignore
+      (((eval wrap1 e) ($vau #ignore #ignore
         (eval (cons op (walk args)) env)
         ))
         ($define! walk
-          (wrap1 ($vau (args) #ignore
+          ((eval wrap1 e) ($vau (args) #ignore
             ($if (equal? () args)
               ()
-              (cons (eval (car args) a-env)
-                (walk (cdr args))))
+              (cons (eval (((eval wrap1 e) ($vau ((x . #ignore)) #ignore x)) args) a-env)
+                (walk (((eval wrap1 e) ($vau ((#ignore . x)) #ignore x)) args))))
             )))
         ))))
+ ($vau (op) env
+    ($vau (arg) a-env
+      (eval (cons op (cons (eval arg a-env) ())) env)))))
 
 ($define! $sequence
     ((wrap ($vau ($seq2) #ignore
@@ -169,11 +159,9 @@ making this more atomic, avoid $lambda
               head
               (cons head ((f f) tail)))))))))
 
-($define! $vau1 $vau)
-
-($define! $vau
- ($vau1 (formals eformal . body) env
-    (eval (cons $vau1 (cons formals (cons eformal
+($define! $vau*
+ ($vau (formals eformal . body) env
+    (eval (cons $vau (cons formals (cons eformal
                (cons (cons $sequence body)()))))
           env)))
 
@@ -181,6 +169,9 @@ making this more atomic, avoid $lambda
    ($vau (formals . body) env
       (wrap (eval (list* $vau formals #ignore body)
                   env))))
+
+($define! car ($lambda ((x . #ignore)) x))
+($define! cdr ($lambda ((#ignore . x)) x))
 
 ($define! caar ($lambda (((x . #ignore) . #ignore)) x))
 ($define! cdar ($lambda (((#ignore . x) . #ignore)) x))
@@ -224,7 +215,7 @@ making this more atomic, avoid $lambda
     ($lambda (lst)
       ($if (equal? () lst)
           ()
-          (cons (list $quote (car lst))
+          (cons (list ($vau (x) #ignore x) (car lst))
                 ((f f) (cdr lst))))))))
 
 
