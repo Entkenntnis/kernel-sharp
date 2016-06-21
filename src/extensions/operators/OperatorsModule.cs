@@ -44,46 +44,38 @@ namespace Kernel
 
 
 ($define! $and
- (Y
-  ($lambda (f)
     ($vau clauses env
         ($cond
             ((null? clauses) #t)
             ((pair? clauses) ($if (eval (car clauses) env)
-                                  (eval (list* f (cdr clauses)) env)
+                                  (eval (list* $and (cdr clauses)) env)
                                   #f))
-            (#t (raise ""$and: lst of wrong type"")))))))
+            (#t (raise ""$and: lst of wrong type"")))))
 
 ($define! $or
- (Y
-  ($lambda (f)
     ($vau clauses env
         ($cond
             ((null? clauses) #f)
             ((pair? clauses) ($if (eval (car clauses) env)
                                   #t
-                                  (eval (list* f (cdr clauses)) env)))
-            (#t (raise ""$or: lst of wrong type"")))))))
+                                  (eval (list* $or (cdr clauses)) env)))
+            (#t (raise ""$or: lst of wrong type"")))))
 
 ($define! filter
- (Y
-  ($lambda (f)
     ($lambda (pred lst)
         ($cond
             ((null? lst) ())
             ((pair? lst) ($if (pred (car lst))
-                               (cons (car lst) (f pred (cdr lst)))
-                               (f pred (cdr lst))))
-            (#t (raise ""filter: lst of wrong type"")))))))
+                               (cons (car lst) (filter pred (cdr lst)))
+                               (filter pred (cdr lst))))
+            (#t (raise ""filter: lst of wrong type"")))))
 
 ($define! foldl
- (Y
-  ($lambda (f)
     ($lambda (proc init lst)
         ($cond
             ((null? lst) init)
-            ((pair? lst) (f proc (proc (car lst) init) (cdr lst)))
-            (#t (raise ""fold: lst of wrong type"")))))))
+            ((pair? lst) (foldl proc (proc (car lst) init) (cdr lst)))
+            (#t (raise ""fold: lst of wrong type"")))))
 
 ($define! reverse
     ($lambda (lst)
@@ -101,14 +93,12 @@ namespace Kernel
             (#t (raise ""reverse: lst of wrong type"")))))
 
 ($define! for-each
- (Y
-  ($lambda (f)
     ($lambda (proc lst)
         ($cond
             ((null? lst) #inert)
             ((pair? lst) (proc (car lst))
-                         (f proc (cdr lst)))
-            (#t (raise ""for-each: lst of wrong type"")))))))
+                         (for-each proc (cdr lst)))
+            (#t (raise ""for-each: lst of wrong type"")))))
 
 ($define! andmap
     ($vau (proc lst) env
@@ -119,42 +109,34 @@ namespace Kernel
         (eval (cons $or (map ($lambda (x) (list proc x)) (eval lst env))) env)))
 
 ($define! assoc
- (Y
-  ($lambda (f)
     ($lambda (v lst)
         ($cond
             ((null? lst) #f)
             ((equal? (caar lst) v)
                 (car lst))
-            (#t (f v (cdr lst))))))))
+            (#t (assoc v (cdr lst))))))
 
 ($define! member?
- (Y
-  ($lambda (f)
     ($lambda (v lst)
         ($cond
             ((null? lst) #f)
             ((equal? v (car lst)) #t)
-            (#t (f v (cdr lst))))))))
+            (#t (member? v (cdr lst))))))
 
 ($define! append2
- (Y
-  ($lambda (f)
     ($lambda (a b)
         ($cond
             ((null? a) b)
             ((null? b) a)
-            ((pair? a) (cons (car a) (f (cdr a) b)))
-            (#t (raise ""append2: lst of wrong type22)))))))
+            ((pair? a) (cons (car a) (append2 (cdr a) b)))
+            (#t (raise ""append2: lst of wrong type"")))))
 
 ($define! append
- (Y
-  ($lambda (f)
     ($lambda lsts
         ($cond
             ((null? lsts) ())
             ((null? (cdr lsts)) (car lsts))
-            (#t (append2 (car lsts) (apply f (cdr lsts)))))))))
+            (#t (append2 (car lsts) (apply append (cdr lsts)))))))
 
 
             ";
