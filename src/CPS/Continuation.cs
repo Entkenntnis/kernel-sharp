@@ -5,7 +5,7 @@ namespace Kernel
 {
     public class Continuation<T>
     {
-        public readonly Func<T, RecursionResult<T>> NextStep;
+        public readonly Func<T, RecursionResult<T>> Call;
         public readonly Continuation<T> Parent;
         //hacky
         public object Context;
@@ -13,7 +13,7 @@ namespace Kernel
         public bool isHandler = false;
         public Continuation(Func<T, RecursionResult<T>> next, Continuation<T> parent, object context)
         {
-            NextStep = next;
+            Call = next;
             Parent = parent;
             Context = context;
         }

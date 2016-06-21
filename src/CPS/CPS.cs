@@ -17,11 +17,11 @@ namespace Kernel
                     var c = recursionResult.Cont;
                     while (c != null && c.Parent != null && !c.isHandler)
                         c = c.Parent;
-                    if (c == null || c.NextStep == null)
+                    if (c == null || c.Call == null)
                         throw new RuntimeException(message + "\n");
                     else {
                         c.Context = message;
-                        recursionResult = c.NextStep(default(T));
+                        recursionResult = c.Call(default(T));
                     }
                 }
                 if (recursionResult.Type == RecursionType.Return)
@@ -36,13 +36,13 @@ namespace Kernel
                     }
                     else
                     {
-                        // pops one level from the stack
-                        recursionResult = nextC.NextStep(recursionResult.Result);
+                        // pops one level from the stack - we pass result to next continuation
+                        recursionResult = nextC.Call(recursionResult.Result);
                     }
                 }
                 else
                 {
-                    recursionResult = recursionResult.NextStep();
+                    recursionResult = recursionResult.NextStep(); //<- this call is currently always to rceval
                 }
 
             } while (true);
@@ -51,11 +51,6 @@ namespace Kernel
         public static RecursionResult<T> Return<T>(T result, Continuation<T> cont)
         {
             return new RecursionResult<T>(RecursionType.Return, result, null, cont);
-        }
-
-        public static RecursionResult<T> Next<T>(Func<RecursionResult<T>> nextStep, Continuation<T> cont)
-        {
-            return new RecursionResult<T>(RecursionType.Next, default(T), nextStep, cont);
         }
 
         public static RecursionResult<T> PassTo<T>(Func<RecursionResult<T>> nextStep)
