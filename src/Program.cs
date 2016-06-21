@@ -50,7 +50,7 @@ namespace Kernel
                 Interpreter.RunCode(datum);
             }
                 
-            Interpreter.REPL();
+            //Interpreter.REPL();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Kernel
                     return CPS.Error<KObject>(ex.Message, cont);
                 }
                 return CPS.Return<KObject>(new KInert(), cont);
-            }, cont, expr.Display());
+            }, cont, "define");
             return CPS.PassTo(() => Evaluator.rceval(expr, env, cc)); 
         }
     }

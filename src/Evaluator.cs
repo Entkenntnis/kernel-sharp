@@ -61,17 +61,17 @@ namespace Kernel
                                         // do something with the next Head argument
                                         KObject next = input.First.Value;
                                         input.RemoveFirst();
-                                        var cc2 = new Continuation<KObject>(recursion, cont, p);
+                                        var cc2 = new Continuation<KObject>(recursion, cont, "eval apps args");
                                         return CPS.PassTo(() => rceval(next, env, cc2));
                                     }
                                 };
                             KObject next2 = input.First.Value;
                             input.RemoveFirst();
-                            var cc = new Continuation<KObject>(recursion, cont, p.Display());
+                            var cc = new Continuation<KObject>(recursion, cont, "eval apps args");
                             return CPS.PassTo(() => rceval(next2, env, cc));
                         }
                         return CPS.Error<KObject>("Unsuitable operation of " + f.Write(), cont);
-                    }, cont, p.Car.Display());
+                    }, cont, "eval op/app");
                 return CPS.PassTo(() => rceval(p.Car, env, childCont));
             }
             else if (datum is KSymbol)

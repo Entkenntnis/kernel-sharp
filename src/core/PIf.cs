@@ -23,7 +23,7 @@ namespace Kernel
                     else
                         return CPS.PassTo<KObject>(() => Evaluator.rceval(fl, env, cont));
                 }
-            }, cont, pred.Display());
+            }, cont, "if");
             return CPS.PassTo(() => Evaluator.rceval(pred, env, cc));   
         }
     }
