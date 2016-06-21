@@ -21,12 +21,7 @@ namespace Kernel
 
         public override string getLibrary()
         {
-            return @"
-($define! Y
-    ($lambda (f)
-        ($let ((rec ($lambda (g) (f ($lambda x (apply (g g) x))))))
-            (rec rec))))
-        
+            return @"        
 
 ($define! $unless
     ($vau (pred . body) env
@@ -82,14 +77,13 @@ namespace Kernel
         ($cond
             ((null? lst) ())
             ((pair? lst) 
-                ($let ((walk (Y
-                  ($lambda (f)
+                ($define! walk
                     ($lambda (input acc)
                         ($let ((next (cons (car input) acc)))
                           ($cond
                             ((null? (cdr input)) next)
-                            (#t (f (cdr input) next)))))))))
-                    (walk lst ())))
+                            (#t (walk (cdr input) next))))))
+                  (walk lst ()))
             (#t (raise ""reverse: lst of wrong type"")))))
 
 ($define! for-each
@@ -123,16 +117,15 @@ namespace Kernel
             ((equal? v (car lst)) #t)
             (#t (member? v (cdr lst))))))
 
-($define! append2
-    ($lambda (a b)
-        ($cond
-            ((null? a) b)
-            ((null? b) a)
-            ((pair? a) (cons (car a) (append2 (cdr a) b)))
-            (#t (raise ""append2: lst of wrong type"")))))
-
 ($define! append
     ($lambda lsts
+      ($define! append2
+        ($lambda (a b)
+            ($cond
+                ((null? a) b)
+                ((null? b) a)
+                ((pair? a) (cons (car a) (append2 (cdr a) b)))
+                (#t (raise ""append: lst of wrong type"")))))
         ($cond
             ((null? lsts) ())
             ((null? (cdr lsts)) (car lsts))

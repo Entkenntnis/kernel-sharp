@@ -132,32 +132,35 @@ making this more atomic, avoid $lambda
       (eval (cons op (cons (eval arg a-env) ())) env)))))
 
 ($define! $sequence
-    ((wrap ($vau ($seq2) #ignore
-        ((wrap ($vau ($rec) #ignore
-            ($rec $rec))) ;this substitutes a y combinator
-         ($vau (f) c-env
-            ($vau (head . tail) env
-                ($if (equal? () tail)
-                    (eval head env)
-                    ($seq2
-                        (eval head env)
-                            (eval (cons ((eval f c-env) (eval f c-env))
-                                        tail) env))))))))
-     ($vau (first second) env
-        ((wrap ($vau #ignore #ignore (eval second env)))
-         (eval first env)))))
+   ((wrap ($vau ($seq2) #ignore
+             ($seq2
+                ($define! $aux
+                   ($vau (head . tail) env
+                      ($if (equal? () tail)
+                           (eval head env)
+                           ($seq2
+                              (eval head env)
+                              (eval (cons $aux tail) env)))))
+                ($vau body env
+                   ($if (equal? () body)
+                        #inert
+                        (eval (cons $aux body) env))))))
+
+      ($vau (first second) env
+         ((wrap ($vau #ignore #ignore (eval second env)))
+          (eval first env)))))
 
 ($define! list (wrap ($vau x #ignore x)))
 
 ($define! list*
-  ((wrap ($vau (my-list-rec) #ignore
-    (wrap ($vau args #ignore
-        ((my-list-rec my-list-rec) args)))))
-   (wrap ($vau (f) #ignore
-      (wrap ($vau ((head . tail)) #ignore
-          ($if (equal? () tail)
-              head
-              (cons head ((f f) tail)))))))))
+   (wrap ($vau args #ignore
+            ($sequence
+               ($define! aux
+                  (wrap ($vau ((head . tail)) #ignore
+                           ($if (equal? () tail)
+                                head
+                                (cons head (aux tail))))))
+               (aux args)))))
 
 ($define! $vau*
  ($vau (formals eformal . body) env
@@ -167,7 +170,7 @@ making this more atomic, avoid $lambda
 
 ($define! $lambda
    ($vau (formals . body) env
-      (wrap (eval (list* $vau formals #ignore body)
+      (wrap (eval (list* $vau* formals #ignore body)
                   env))))
 
 ($define! car ($lambda ((x . #ignore)) x))
@@ -205,59 +208,51 @@ making this more atomic, avoid $lambda
 ($define! cddddr ($lambda ((#ignore .(#ignore . (#ignore . (#ignore . x)))))x))
 
 ($define! apply
-  (($lambda (helper)
-     ($lambda (appv arg . opt)
-        (eval (cons appv ((helper helper) arg))
-              ($if (equal? () opt)
-                   #empty-env
-                   (car opt)))))
-   ($lambda (f)
-    ($lambda (lst)
-      ($if (equal? () lst)
-          ()
-          (cons (list ($vau (x) #ignore x) (car lst))
-                ((f f) (cdr lst))))))))
-
+ ($sequence
+    ($define! unwrap
+        ($lambda (lst)
+            ($if (equal? () lst)
+                ()
+                (cons (list ($vau (x) #ignore x) (car lst))
+                    (unwrap (cdr lst))))))
+   ($lambda (appv arg . opt)
+      (eval (cons appv (unwrap arg))
+            ($if (equal? () opt)
+                 #empty-env
+                 (car opt))))))
+               
 
 ($define! $cond
-  (($lambda (my-cond-rec)
-      (my-cond-rec my-cond-rec))
-  ($lambda (f)
-    ($vau clauses env
+   ($vau* clauses env
+      ($define! aux
+         ($lambda ((test . body) . clauses)
+            ($if (eval test env)
+                 (eval (cons $sequence body) env)
+                 (eval (cons $cond clauses) env))))
+
       ($if (equal? () clauses)
            #inert
-           (apply
-              ($lambda ((test . body) . clauses)
-                  ($if (eval test env)
-                        (eval (cons $sequence body) env)
-                        (eval (cons (f f) clauses) env)))
-               clauses))))))
+           (apply aux clauses))))
 
 ($define! map
-  (($lambda (all-null map1)
     ($lambda (f . lsts)
+      ($define! all-null
+          ($lambda (lst)
+            ($if (equal? () lst)
+                  #t
+                  ($if (equal? () (car lst))
+                       (all-null (cdr lst))
+                       #f))))
+      ($define! map1
+        ($lambda (f lst)
+            ($if (equal? () lst)
+                 ()
+                 (cons (f (car lst))
+                  (map1 f (cdr lst))))))
       ($if (all-null lsts)
            ()
            (cons (apply f (map1 car lsts))
                  (apply map (cons f (map1 cdr lsts)))))))
-  (($lambda (rec)
-      (rec rec))
-    ($lambda (f)
-      ($lambda (lst)
-        ($if (equal? () lst)
-              #t
-              ($if (equal? () (car lst))
-                   ((f f) (cdr lst))
-                   #f)))))
-  (($lambda (rec)
-      (rec rec))
-    ($lambda (rf)    
-      ($lambda (f lst)
-        ($if (equal? () lst)
-             ()
-             (cons (f (car lst))
-              ((rf rf) f (cdr lst)))))))))
-
 
 ($define! $let
    ($vau (bindings . body) env
