@@ -109,6 +109,11 @@
     <Compile Include="src\extensions\console\PDisplayln.cs" />
     <Compile Include="src\extensions\console\PRead.cs" />
     <Compile Include="src\extensions\environment\EnvironmentModule.cs" />
+    <Compile Include="src\extensions\continuation\KContinuation.cs" />
+    <Compile Include="src\extensions\continuation\ContinuationModule.cs" />
+    <Compile Include="src\extensions\continuation\PCallCC.cs" />
+    <Compile Include="src\extensions\continuation\PContinuation2Applicative.cs" />
+    <Compile Include="src\extensions\continuation\PPassCont.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -124,5 +129,6 @@
     <Folder Include="src\extensions\types\" />
     <Folder Include="src\extensions\operators\" />
     <Folder Include="src\extensions\environment\" />
+    <Folder Include="src\extensions\continuation\" />
   </ItemGroup>
 </Project>

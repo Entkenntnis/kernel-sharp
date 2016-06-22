@@ -42,6 +42,7 @@ namespace Kernel
             Interpreter.LoadModule(new TypesModule());
             Interpreter.LoadModule(new OperatorsModule());
             Interpreter.LoadModule(new EnvironmentModule());
+            Interpreter.LoadModule(new ContinuationModule());
             Interpreter.LoadModule(new NumbersModule());
 
             // testing the interpreter
