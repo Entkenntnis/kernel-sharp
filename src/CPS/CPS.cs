@@ -6,6 +6,7 @@ namespace Kernel
 {
     public static class CPS
     {
+        private static object ctxt = null;
         public static T Execute<T>(Func<RecursionResult<T>> func)
         {
             var recursionResult = func();
@@ -21,6 +22,7 @@ namespace Kernel
                         throw new RuntimeException(message + "\n");
                     else {
                         c.Context = message;
+                        setContext(c.Context);
                         recursionResult = c.Call(default(T));
                     }
                 }
@@ -37,6 +39,7 @@ namespace Kernel
                     else
                     {
                         // pops one level from the stack - we pass result to next continuation
+                        setContext(nextC.Context);
                         recursionResult = nextC.Call(recursionResult.Result);
                     }
                 }
@@ -47,7 +50,14 @@ namespace Kernel
 
             } while (true);
         }
-
+        public static object getContext()
+        {
+            return ctxt;
+        }
+        public static void setContext(object obj)
+        {
+            ctxt = obj;
+        }
         public static RecursionResult<T> Return<T>(T result, Continuation<T> cont)
         {
             return new RecursionResult<T>(RecursionType.Return, result, null, cont);

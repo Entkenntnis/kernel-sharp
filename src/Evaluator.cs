@@ -41,19 +41,37 @@ namespace Kernel
                                 }, ops);
                             LinkedList<KObject> pairs = new LinkedList<KObject>();
                             Func<KObject, RecursionResult<KObject>> recursion = null;
+                            bool firstRun = true;
 
                             // this continuation is called with the next argument evaled to x. Place next value
                             recursion = (x) =>
                                 {
-                                    pairs.AddLast(x);
+                                    if (CPS.getContext() is int && !firstRun) {
+                                        // restore elements
+                                        int oldInputCount = (int)CPS.getContext() + 1;
+                                        input = new LinkedList<KObject>();
+                                        KPair.Foreach(e =>
+                                            {
+                                                input.AddLast(e);
+                                            }, ops);
+                                        int leaveOutputs = input.Count - oldInputCount;
+                                        while(input.Count > oldInputCount) {
+                                            input.RemoveFirst();
+                                        }
+                                        while (pairs.Count >= leaveOutputs) {
+                                            pairs.RemoveFirst();
+                                        }
+                                        firstRun = true;
+                                    }
+                                    pairs.AddFirst(x);
                                     if (input.Count == 0)
                                     {
                                         // we are finished
                                         KObject output = new KNil();
-                                        while(pairs.Count > 0) {
-                                            output = new KPair(pairs.Last.Value, output);
-                                            pairs.RemoveLast();
+                                        foreach (var el in pairs) {
+                                            output = new KPair(el, output);
                                         }
+                                        firstRun = false;
                                         return combineApp(f as KApplicative, output, env, cont);
                                     }
                                     else
@@ -61,13 +79,13 @@ namespace Kernel
                                         // do something with the next Head argument
                                         KObject next = input.First.Value;
                                         input.RemoveFirst();
-                                        var cc2 = new Continuation<KObject>(recursion, cont, "eval apps args");
+                                        var cc2 = new Continuation<KObject>(recursion, cont, input.Count);
                                         return CPS.PassTo(() => rceval(next, env, cc2));
                                     }
                                 };
                             KObject next2 = input.First.Value;
                             input.RemoveFirst();
-                            var cc = new Continuation<KObject>(recursion, cont, "eval apps args");
+                            var cc = new Continuation<KObject>(recursion, cont, input.Count);
                             return CPS.PassTo(() => rceval(next2, env, cc));
                         }
                         return CPS.Error<KObject>("Unsuitable operation of " + f.Write(), cont);
