@@ -19,27 +19,7 @@ namespace Kernel
             CPara(args, 1);
             var inex = First(args) as KDouble;
             Check(inex);
-            double input = inex.Value;
-            if (Double.IsInfinity(input))
-                throw new RuntimeException("can not make infinity exact");
-            bool negativ = false;
-            if (input < 0) {
-                negativ = true;
-                input *= -1;
-            }
-            BigInteger num = (BigInteger)Math.Floor(input);
-            BigInteger denom = 1;
-            double rem = input - Math.Floor(input);
-            while (rem > 0) {
-                num *= 2;
-                denom *= 2;
-                rem *= 2.0;
-                num += (BigInteger)Math.Floor(rem);
-                rem -= Math.Floor(rem);
-            }
-            if (negativ)
-                num *= -1;
-            return new KFraction(num, denom);
+            return KFraction.fromDouble(inex.Value);
         }
     }
 }

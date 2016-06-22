@@ -12,6 +12,9 @@ namespace Kernel
         {
             Interpreter.AddOp(new PDisplay());
             Interpreter.AddOp(new PWrite());
+            Interpreter.AddOp(new PDisplayln());
+            Interpreter.AddOp(new PWriteln());
+            Interpreter.AddOp(new PRead());
         }
 
         public override string[] DependOn()

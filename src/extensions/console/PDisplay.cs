@@ -11,7 +11,7 @@ namespace Kernel
         public override object Do(KObject args, KEnvironment env, Continuation<KObject> cont)
         {
             CPara(args, 1);
-            Console.WriteLine(First(args).Display());
+            Console.Write(First(args).Display());
             return new KInert();
         }
     }

@@ -98,6 +98,16 @@
     <Compile Include="src\extensions\types\PEnvironmentp.cs" />
     <Compile Include="src\extensions\types\PCombinerp.cs" />
     <Compile Include="src\extensions\operators\OperatorsModule.cs" />
+    <Compile Include="src\extensions\numbers\PAdd.cs" />
+    <Compile Include="src\extensions\numbers\PSubtract.cs" />
+    <Compile Include="src\extensions\numbers\PMultiply.cs" />
+    <Compile Include="src\extensions\numbers\PDivide.cs" />
+    <Compile Include="src\extensions\numbers\PLessp.cs" />
+    <Compile Include="src\extensions\numbers\PLessEqualp.cs" />
+    <Compile Include="src\extensions\numbers\PEqualp.cs" />
+    <Compile Include="src\extensions\console\PWriteln.cs" />
+    <Compile Include="src\extensions\console\PDisplayln.cs" />
+    <Compile Include="src\extensions\console\PRead.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -72,45 +72,53 @@ namespace Kernel
             return Evaluator.Eval(Parser.Parse(datum), env);
         }
 
+        public static KObject readDatum()
+        {
+            KObject datum = null;
+            try {
+                StringBuilder sb = new StringBuilder();
+                bool finished = false;
+                bool quoteContext = false;
+                int parenCount = 0;
+                while (!finished) {
+                    string inData = Console.ReadLine() + "\n";
+                    for (int i = 0; i < inData.Length; i++) {
+                        if (inData[i] == ';')
+                            break;
+                        if (inData[i] == '"') {
+                            int previous = i - 1;
+                            while (previous > 0 && inData[previous] == '\\')
+                                previous--;
+                            if (i - 1 - previous % 2 == 1)
+                                quoteContext = !quoteContext;
+                        }
+                        if (inData[i] == '(' && !quoteContext)
+                            parenCount++;
+                        else if (inData[i] == ')' && !quoteContext)
+                            parenCount--;
+                        if (parenCount < 0)
+                            throw new ParseException("Unbalanced parenthesis!");
+                    }
+                    sb.Append(inData);
+                    if (parenCount == 0)
+                        finished = true;
+                }
+                datum = Parser.Parse(sb.ToString());
+            } catch (Exception e) {
+                Console.WriteLine("ParseError: {0}", e.Message);
+                return null;
+            }
+            return datum;
+        }
+
         public static void REPL()
         {
             init();
             while (true) {
                 Console.Write(">> ");
-                KObject datum = null;
-                try {
-                    StringBuilder sb = new StringBuilder();
-                    bool finished = false;
-                    bool quoteContext = false;
-                    int parenCount = 0;
-                    while (!finished) {
-                        string inData = Console.ReadLine() + "\n";
-                        for (int i = 0; i < inData.Length; i++) {
-                            if (inData[i] == ';')
-                                break;
-                            if (inData[i] == '"') {
-                                int previous = i - 1;
-                                while (previous > 0 && inData[previous] == '\\')
-                                    previous--;
-                                if (i - 1 - previous % 2 == 1)
-                                    quoteContext = !quoteContext;
-                            }
-                            if (inData[i] == '(' && !quoteContext)
-                                parenCount++;
-                            else if (inData[i] == ')' && !quoteContext)
-                                parenCount--;
-                            if (parenCount < 0)
-                                throw new ParseException("Unbalanced parenthesis!");
-                        }
-                        sb.Append(inData);
-                        if (parenCount == 0)
-                            finished = true;
-                    }
-                    datum = Parser.Parse(sb.ToString());
-                } catch (ParseException e) {
-                    Console.WriteLine("ParseError: {0}", e.Message);
+                KObject datum = readDatum();
+                if (datum == null)
                     continue;
-                }
                 if (datum is KPair) {
                     KPair p = datum as KPair;
                     if (p.Car is KSymbol && ((KSymbol)p.Car).Value.Equals("exit") && p.Cdr is KNil)

@@ -18,9 +18,7 @@ namespace Kernel
             CPara(args, 1);
             KFraction input = First(args) as KFraction;
             Check(input);
-            double num = (double)input.Numerator;
-            double denom = (double)input.Denominator;
-            return new KDouble(num/denom);
+            return new KDouble(input.ToDouble());
         }
     }
 }

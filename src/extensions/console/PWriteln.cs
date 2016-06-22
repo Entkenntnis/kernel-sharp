@@ -2,16 +2,16 @@
 
 namespace Kernel
 {
-    public class PWrite : POperative
+    public class PWriteln : POperative
     {
         public override string getName()
         {
-            return "write";
+            return "writeln";
         }
         public override object Do(KObject args, KEnvironment env, Continuation<KObject> cont)
         {
             CPara(args, 1);
-            Console.Write(First(args).Write());
+            Console.WriteLine(First(args).Write());
             return new KInert();
         }
     }

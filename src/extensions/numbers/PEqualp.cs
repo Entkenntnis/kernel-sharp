@@ -2,17 +2,23 @@
 
 namespace Kernel
 {
-    public class PWrite : POperative
+    public class PEqualp : POperative
     {
+        public PEqualp()
+        {
+        }
+
         public override string getName()
         {
-            return "write";
+            return "=?";
         }
+
         public override object Do(KObject args, KEnvironment env, Continuation<KObject> cont)
         {
-            CPara(args, 1);
-            Console.Write(First(args).Write());
-            return new KInert();
+
+            return NumbersModule.Numberp(args, (a, b) => {
+                return a.CompareTo(b);
+            });
         }
     }
 }
