@@ -47,7 +47,7 @@ namespace Kernel
                             recursion = (x) =>
                                 {
                                     if (CPS.getContext() is int && !firstRun) {
-                                        // restore elements
+                                        // restore elements when reentering continuation
                                         int oldInputCount = (int)CPS.getContext() + 1;
                                         input = new LinkedList<KObject>();
                                         KPair.Foreach(e =>

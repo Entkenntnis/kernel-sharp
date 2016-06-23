@@ -114,6 +114,12 @@
     <Compile Include="src\extensions\continuation\PCallCC.cs" />
     <Compile Include="src\extensions\continuation\PContinuation2Applicative.cs" />
     <Compile Include="src\extensions\continuation\PPassCont.cs" />
+    <Compile Include="src\extensions\encapsulation\EncapsulationModule.cs" />
+    <Compile Include="src\extensions\encapsulation\KEncapsulation.cs" />
+    <Compile Include="src\extensions\encapsulation\PEncap.cs" />
+    <Compile Include="src\extensions\encapsulation\PEncapE.cs" />
+    <Compile Include="src\extensions\encapsulation\PEncapD.cs" />
+    <Compile Include="src\extensions\encapsulation\PEncapP.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -130,5 +136,6 @@
     <Folder Include="src\extensions\operators\" />
     <Folder Include="src\extensions\environment\" />
     <Folder Include="src\extensions\continuation\" />
+    <Folder Include="src\extensions\encapsulation\" />
   </ItemGroup>
 </Project>
